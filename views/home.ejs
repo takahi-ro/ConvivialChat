@@ -1,0 +1,72 @@
+
+    <div class="parent">
+      <h1 class="heading" style="border-bottom: 1px solid #000;">Room example</h1>
+      <div class="remote-stream">
+        <video id="js-local-stream"></video>
+        <div class="remote-streams" id="js-remote-streams"></div>
+      </div>
+      
+      <div class="room">
+        <div>
+          <div class = "disable">
+            <span id="js-room-mode"></span>:
+            <input type="text" placeholder="Room Name" id="js-room-id" value ="<%= value1 %>">
+            <button id="js-join-trigger" class = "btn btn-outline-primary">Join</button>
+            <input type="text" id = "dami" value ="<%= value2 %>">
+          </div>
+          <button onclick="location.href='<%= `/` %>'" id="js-leave-trigger" class = "btn btn-outline-primary" style ="margin-top: 10px;">Leave</button>
+              <div>
+                <p style = "display:inline-block;">Video:</p>
+                <div class="toggle-btn active" id = "onoff">
+                  <input type="checkbox"  checked class="cb-value" />
+                  <span class="round-btn"></span>
+                </div>
+              </div>
+              <div>
+                <p style = "display:inline-block;">Voice:</p>
+                <div class="toggle-btn active" id = "onoff2">
+                  <input type="checkbox"  checked class="cb-value" />
+                  <span class="round-btn"></span>
+                </div>
+              </div>
+         <!-- この下がワードクラウドのオンオフ -->
+          <button id="start-btn" class = "btn btn-outline-primary">start</button>
+          <button id="stop-btn"class = "btn btn-outline-primary">stop</button>
+          <div id="result-div" ></div>
+        
+        </div>
+
+        <div  id="cloud"></div>
+        
+        
+
+        <div>
+          <pre class="messages" id="js-messages"></pre>
+          <p id="message"></p>
+          <input type="text" id="js-local-text">
+          <button id="js-send-trigger" class = "btn btn-outline-primary">Say</button>
+          <button id="js-send-trigger2" class = "btn btn-outline-primary">Send</button>
+          <!-- <button id="" class = "btn btn-outline-primary">Send</button> -->
+        </div>
+      </div>
+      <p class="meta" id="js-meta"></p>
+    </div>
+ 
+
+      <!-- ここからはspeech to text -->
+
+  
+    
+
+    
+     
+     
+      <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+      <script src="https://d3js.org/d3.v5.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+     
+         
+    
+ 
+    
+   

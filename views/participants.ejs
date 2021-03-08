@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="list-container">
+        <% participants.forEach(s => { %>
+        <div class="participant">
+          <p>
+            <span class="item-label">Roomname:</span>
+            <%= s.roomname %>
+          </p>
+          <p>
+            <span class="item-label">Yourname:</span>
+            <%= s.yourname %>
+          </p>
+          <p>
+            <span class="item-label">Time:</span>
+            <%= s.createdAt %>
+          </p>
+        </div>
+        <% }); %>
+      </div>
+
+</div>
