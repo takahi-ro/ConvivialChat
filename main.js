@@ -31,9 +31,9 @@ app.set("view engine", "ejs");
 
 app.set("port", process.env.PORT || 3000);
 //ヘロクデプロイで追加した
-const server = app.listen(app.get("port"), () => {
-console.log('Server running at http://localhost: ${app.get("port")}')
-});
+// const server = app.listen(app.get("port"), () => {
+// console.log(`Server running at http://localhost: ${app.get("port")}`)
+// });
 
 app.use(
   express.urlencoded({
