@@ -84,7 +84,7 @@ const Peer = window.Peer;
       return;
     }
     
-   //この下で相手に渡すデータを決めている。sendnameは勝手に作った。
+   //この下で相手に渡すデータを決めている。
    const room = peer.joinRoom(roomId.value, {
     mode: getRoomModeByHash(),
     stream: localStream,
