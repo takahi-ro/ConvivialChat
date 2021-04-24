@@ -259,6 +259,7 @@ recognition.onresult = (event) => {
   for (let i = event.resultIndex; i < event.results.length; i++) {
     let transcript = event.results[i][0].transcript;
     if (event.results[i].isFinal) {
+      //このfinalTransscriptを170行目でroom.sendしたら、メッセージのログがのこる右側に話した言葉も残っていくはず
       finalTranscript += transcript;
       //以下はテキストからスピーチ
       //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
@@ -274,11 +275,7 @@ recognition.onresult = (event) => {
           // console.log(myWords);
        
           
-    WordCloud();
-          
-          
-          
-
+    WordCloud();   
         // var PushJSON = (i) => {
         //   var json = $.getJSON("../data/word.json", (data) => {
         //     data.push({
@@ -295,7 +292,6 @@ recognition.onresult = (event) => {
         
         // DATA_FILE_PATH = JSON.stringify(Targettext);
         // console.log(Targettext)
-    
       }
     } else {
       interimTranscript = transcript;
@@ -303,16 +299,7 @@ recognition.onresult = (event) => {
   }
   resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
   // console.log(event);
-  
-  
-    
- 
-  
-
  }
-
- 
-
 startBtn.onclick = () => {
   recognition.start();
 }
