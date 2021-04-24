@@ -261,6 +261,7 @@ recognition.onresult = (event) => {
     if (event.results[i].isFinal) {
       finalTranscript += transcript;
       //以下はテキストからスピーチ
+      //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
       for(i=0; i<event.results.length;i ++){
         // var midiumtext = JSON.parse(DATA_FILE_PATH)
         
