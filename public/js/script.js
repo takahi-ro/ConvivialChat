@@ -166,6 +166,53 @@ const Peer = window.Peer;
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
+            const startBtn = document.querySelector('#start-btn');
+            const stopBtn = document.querySelector('#stop-btn');
+            const resultDiv = document.querySelector('#result-div');
+            SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+            let recognition = new SpeechRecognition();
+
+            recognition.lang = 'ja-JP';
+            recognition.interimResults = true;
+            recognition.continuous = true;
+
+            let finalTranscript = ''; // 確定した(黒の)認識結果
+
+            recognition.onresult = (event) => {
+              let interimTranscript = ''; // 暫定(灰色)の認識結果
+              for (let i = event.resultIndex; i < event.results.length; i++) {
+                let transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                  finalTranscript += transcript;
+                  room.send(event.results[event.results.length-1][0].transcript);
+                  messages.textContent += `${Yourname.value}: ${event.results[event.results.length-1][0].transcript}\n`;
+
+                  //以下はテキストからスピーチ
+                  
+                  // for(i=0; i<event.results.length;i ++){
+                  
+                  //      targettext = myWords.push({
+                  //       word: event.results[i][0].transcript,size: Math.floor((Math.random()+0.1)*30)
+                        
+                  //     });
+                  // }
+                } else {
+                  interimTranscript = transcript;
+                }
+              }
+              resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+              // console.log(event);
+            }
+
+            
+
+            startBtn.onclick = () => {
+              recognition.start();
+            }
+            stopBtn.onclick = () => {
+              recognition.stop();
+            }
+//ここまでがSpeech to text
             room.send(localText.value);
   
             messages.textContent += `${Yourname.value}: ${localText.value}\n`;
@@ -214,96 +261,96 @@ setTimeout(ClickJoinButton,2000)
 
 
 // 以下はSpeech to text 
-const startBtn = document.querySelector('#start-btn');
-const stopBtn = document.querySelector('#stop-btn');
-const resultDiv = document.querySelector('#result-div');
+// const startBtn = document.querySelector('#start-btn');
+// const stopBtn = document.querySelector('#stop-btn');
+// const resultDiv = document.querySelector('#result-div');
 
-// この↓2つはワードクラウド
-var myWords =[
-  // {"word":"イノシシ","size":10}
-  // {"word":"おにやんま","size":6},
-  // {"word":"ゆるっと","size":8},
-  // {"word":"映画","size":6},
-  // {"word":"ヘルシンキ","size":20},
-  // {"word":"メタリカ","size":15},
-  // {"word":"お面","size":10},
-  // {"word":"おいしい","size":20},
-  // {"word":"クリプト","size":19},
-  // {"word":"神戸","size":12},
-  // {"word":"ザッパ","size":20},
-  // {"word":"大崎ゲート","size":18},
-  // {"word":"テスト","size":10},
-  // {"word":"テント","size":20},
-  // {"word":"滝","size":20},
-  // {"word":"アジャイル","size":10},
-  // {"word":"ヤードバーズ","size":12},
-  // {"word":"恵比寿","size":12},
-  // {"word":"私の名前は藤井孝弘です","size":15}
-];
+// // この↓2つはワードクラウド
+// var myWords =[
+//   // {"word":"イノシシ","size":10}
+//   // {"word":"おにやんま","size":6},
+//   // {"word":"ゆるっと","size":8},
+//   // {"word":"映画","size":6},
+//   // {"word":"ヘルシンキ","size":20},
+//   // {"word":"メタリカ","size":15},
+//   // {"word":"お面","size":10},
+//   // {"word":"おいしい","size":20},
+//   // {"word":"クリプト","size":19},
+//   // {"word":"神戸","size":12},
+//   // {"word":"ザッパ","size":20},
+//   // {"word":"大崎ゲート","size":18},
+//   // {"word":"テスト","size":10},
+//   // {"word":"テント","size":20},
+//   // {"word":"滝","size":20},
+//   // {"word":"アジャイル","size":10},
+//   // {"word":"ヤードバーズ","size":12},
+//   // {"word":"恵比寿","size":12},
+//   // {"word":"私の名前は藤井孝弘です","size":15}
+// ];
 
-var targettext;
+// var targettext;
 
-SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-let recognition = new SpeechRecognition();
+// SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+// let recognition = new SpeechRecognition();
 
-recognition.lang = 'ja-JP';
-recognition.interimResults = true;
-recognition.continuous = true;
+// recognition.lang = 'ja-JP';
+// recognition.interimResults = true;
+// recognition.continuous = true;
 
-let finalTranscript = ''; // 確定した(黒の)認識結果
-console.log(myWords);
-recognition.onresult = (event) => {
-  let interimTranscript = ''; // 暫定(灰色)の認識結果
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    let transcript = event.results[i][0].transcript;
-    if (event.results[i].isFinal) {
-      //このfinalTransscriptを170行目でroom.sendしたら、メッセージのログがのこる右側に話した言葉も残っていくはず
-      finalTranscript += transcript;
-      //以下はテキストからスピーチ
-      //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
+// let finalTranscript = ''; // 確定した(黒の)認識結果
+// console.log(myWords);
+// recognition.onresult = (event) => {
+//   let interimTranscript = ''; // 暫定(灰色)の認識結果
+//   for (let i = event.resultIndex; i < event.results.length; i++) {
+//     let transcript = event.results[i][0].transcript;
+//     if (event.results[i].isFinal) {
+//       //このfinalTransscriptを170行目でroom.sendしたら、メッセージのログがのこる右側に話した言葉も残っていくはず
+//       finalTranscript += transcript;
+//       //以下はテキストからスピーチ
+//       //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
       
-        // var midiumtext = JSON.parse(DATA_FILE_PATH)
+//         // var midiumtext = JSON.parse(DATA_FILE_PATH)
         
-        // var targettext = DATA_FILE_PATH.word.push({word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)});
+//         // var targettext = DATA_FILE_PATH.word.push({word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)});
       
-           targettext = myWords.push({
-            word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)
+//            targettext = myWords.push({
+//             word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)
             
-          });
-          // console.log(myWords);
+//           });
+//           // console.log(myWords);
        
           
-    WordCloud();   
-        // var PushJSON = (i) => {
-        //   var json = $.getJSON("../data/word.json", (data) => {
-        //     data.push({
-        //       word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)
-        //     });
-        //     console.log(data);
-        //     DATA_FILE_PATH = data;
-        //   });
-        // }
-        // PushJSON(i);
+//     WordCloud();   
+//         // var PushJSON = (i) => {
+//         //   var json = $.getJSON("../data/word.json", (data) => {
+//         //     data.push({
+//         //       word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)
+//         //     });
+//         //     console.log(data);
+//         //     DATA_FILE_PATH = data;
+//         //   });
+//         // }
+//         // PushJSON(i);
         
        
-        // DATA_FILE_PATH = WORDDATA;
+//         // DATA_FILE_PATH = WORDDATA;
         
-        // DATA_FILE_PATH = JSON.stringify(Targettext);
-        // console.log(Targettext)
+//         // DATA_FILE_PATH = JSON.stringify(Targettext);
+//         // console.log(Targettext)
       
-    } else {
-      interimTranscript = transcript;
-    }
-  }
-  resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
-  // console.log(event);
- }
-startBtn.onclick = () => {
-  recognition.start();
-}
-stopBtn.onclick = () => {
-  recognition.stop();
-}
+//     } else {
+//       interimTranscript = transcript;
+//     }
+//   }
+//   resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+//   // console.log(event);
+//  }
+// startBtn.onclick = () => {
+//   recognition.start();
+// }
+// stopBtn.onclick = () => {
+//   recognition.stop();
+// }
 
 
 
