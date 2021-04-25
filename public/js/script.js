@@ -213,7 +213,7 @@ setTimeout(ClickJoinButton,2000)
 
 
 
-// これはSpeech to text 
+// 以下はSpeech to text 
 const startBtn = document.querySelector('#start-btn');
 const stopBtn = document.querySelector('#stop-btn');
 const resultDiv = document.querySelector('#result-div');
@@ -243,8 +243,6 @@ var myWords =[
 
 var targettext;
 
-
-
 SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
 let recognition = new SpeechRecognition();
 
@@ -263,13 +261,13 @@ recognition.onresult = (event) => {
       finalTranscript += transcript;
       //以下はテキストからスピーチ
       //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
-      for(i=0; i<event.results.length;i ++){
+      
         // var midiumtext = JSON.parse(DATA_FILE_PATH)
         
         // var targettext = DATA_FILE_PATH.word.push({word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)});
       
            targettext = myWords.push({
-            word: event.results[i][0].transcript,size: Math.floor((Math.random()+0.1)*30)
+            word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)
             
           });
           // console.log(myWords);
@@ -292,7 +290,7 @@ recognition.onresult = (event) => {
         
         // DATA_FILE_PATH = JSON.stringify(Targettext);
         // console.log(Targettext)
-      }
+      
     } else {
       interimTranscript = transcript;
     }
