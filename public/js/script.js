@@ -200,7 +200,7 @@ const Peer = window.Peer;
                   interimTranscript = transcript;
                 }
               }
-              resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+              // resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
               // console.log(event);
             }
 
