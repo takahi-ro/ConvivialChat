@@ -15,6 +15,7 @@ const Peer = window.Peer;
   const meta = document.getElementById('js-meta');
   const sdkSrc = document.querySelector('script[src*=skyway]');
   const Yourname = document.getElementById('dami');
+  var form = document.getElementById('form');
 
   var msg = new SpeechSynthesisUtterance();
   meta.innerText = `
@@ -22,7 +23,7 @@ const Peer = window.Peer;
     SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}
   `.trim();
  
- 
+
 
   const getRoomModeByHash = () => (location.hash ='sfu');
 
@@ -84,11 +85,13 @@ const Peer = window.Peer;
       return;
     }
     
-   //この下で相手に渡すデータを決めている。
+   //この下で相手に渡すデータを決めている
    const room = peer.joinRoom(roomId.value, {
     mode: getRoomModeByHash(),
     stream: localStream,
-  });
+  }, {metadata: {
+    name:Yourname.value
+  }});
 
    console.log(room);
 
@@ -99,8 +102,6 @@ const Peer = window.Peer;
     
     });
 
-
-  
 
 
     room.on('peerJoin', (peerId) => {
@@ -130,6 +131,7 @@ const Peer = window.Peer;
       // Show a message sent to the room and who sent
       messages.textContent += `${src}: ${data}\n`;
       console.log(src);
+      
     });
 
     // for closing room members
@@ -168,53 +170,57 @@ const Peer = window.Peer;
           console.log("text value is null");}else{
             const startBtn = document.querySelector('#start-btn');
             const stopBtn = document.querySelector('#stop-btn');
-            const resultDiv = document.querySelector('#result-div');
+            // const resultDiv = document.querySelector('#result-div');
             SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-            let recognition = new SpeechRecognition();
+        let recognition = new SpeechRecognition();
 
-            recognition.lang = 'ja-JP';
-            recognition.interimResults = true;
-            recognition.continuous = true;
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = true;
+        recognition.continuous = true;
 
-            let finalTranscript = ''; // 確定した(黒の)認識結果
+        let finalTranscript = ''; // 確定した(黒の)認識結果
 
-            recognition.onresult = (event) => {
-              let interimTranscript = ''; // 暫定(灰色)の認識結果
-              for (let i = event.resultIndex; i < event.results.length; i++) {
-                let transcript = event.results[i][0].transcript;
-                if (event.results[i].isFinal) {
-                  finalTranscript += transcript;
-                  room.send(event.results[event.results.length-1][0].transcript);
-                  messages.textContent += `${Yourname.value}: ${event.results[event.results.length-1][0].transcript}\n`;
-
-                  //以下はテキストからスピーチ
-                  
-                  // for(i=0; i<event.results.length;i ++){
-                  
-                  //      targettext = myWords.push({
-                  //       word: event.results[i][0].transcript,size: Math.floor((Math.random()+0.1)*30)
-                        
-                  //     });
-                  // }
-                } else {
-                  interimTranscript = transcript;
-                }
-              }
-              // resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
-              // console.log(event);
-            }
-
+        recognition.onresult = (event) => {
+          let interimTranscript = ''; // 暫定(灰色)の認識結果
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            let transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript;
+              room.send(event.results[event.results.length-1][0].transcript);
+              messages.textContent += `${Yourname.value}: ${event.results[event.results.length-1][0].transcript}\n`;
+              
+              //チャットを一番下までスクロールさせる
+              var scrollToBottom = () => {
+                messages.scrollTop = messages.scrollHeight;
+              };
+              scrollToBottom();
+           
             
+              // for(i=0; i<event.results.length;i ++){
+              
+              //      targettext = myWords.push({
+              //       word: event.results[i][0].transcript,size: Math.floor((Math.random()+0.1)*30)
+                    
+              //     });
+              // }
+            } else {
+              interimTranscript = transcript;
+            }
+          }
+          // resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
+          // console.log(event);
+        }
 
-            startBtn.onclick = () => {
-              recognition.start();
-            }
-            stopBtn.onclick = () => {
-              recognition.stop();
-            }
-//ここまでがSpeech to text
-            room.send(localText.value);
-  
+        
+
+        startBtn.onclick = () => {
+          recognition.start();
+        }
+        stopBtn.onclick = () => {
+          recognition.stop();
+        }//ここまでがSpeech to text
+
+            room.send(localText.value)    
             messages.textContent += `${Yourname.value}: ${localText.value}\n`;
             localText.value = '';
           }
@@ -251,7 +257,7 @@ const ClickJoinButton = () =>{
   console.log("You can join the room!");
 };
 
-setTimeout(ClickJoinButton,2000)
+setTimeout(ClickJoinButton,3000)
 
 
 
@@ -260,7 +266,7 @@ setTimeout(ClickJoinButton,2000)
 
 
 
-// 以下はSpeech to text 
+// これはSpeech to text 
 // const startBtn = document.querySelector('#start-btn');
 // const stopBtn = document.querySelector('#stop-btn');
 // const resultDiv = document.querySelector('#result-div');
@@ -290,6 +296,8 @@ setTimeout(ClickJoinButton,2000)
 
 // var targettext;
 
+
+
 // SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
 // let recognition = new SpeechRecognition();
 
@@ -304,11 +312,10 @@ setTimeout(ClickJoinButton,2000)
 //   for (let i = event.resultIndex; i < event.results.length; i++) {
 //     let transcript = event.results[i][0].transcript;
 //     if (event.results[i].isFinal) {
-//       //このfinalTransscriptを170行目でroom.sendしたら、メッセージのログがのこる右側に話した言葉も残っていくはず
 //       finalTranscript += transcript;
 //       //以下はテキストからスピーチ
-//       //多分ワードクラウドが一個ずつじゃないのはここで何回も全てプッシュしているから。最新のやつひとつづつプッシュにしたい。
       
+//       // for(i=0; i<event.results.length;i ++){
 //         // var midiumtext = JSON.parse(DATA_FILE_PATH)
         
 //         // var targettext = DATA_FILE_PATH.word.push({word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)});
@@ -320,7 +327,11 @@ setTimeout(ClickJoinButton,2000)
 //           // console.log(myWords);
        
           
-//     WordCloud();   
+//     WordCloud();
+          
+          
+          
+
 //         // var PushJSON = (i) => {
 //         //   var json = $.getJSON("../data/word.json", (data) => {
 //         //     data.push({
@@ -337,7 +348,8 @@ setTimeout(ClickJoinButton,2000)
         
 //         // DATA_FILE_PATH = JSON.stringify(Targettext);
 //         // console.log(Targettext)
-      
+    
+//       // }
 //     } else {
 //       interimTranscript = transcript;
 //     }
@@ -345,6 +357,9 @@ setTimeout(ClickJoinButton,2000)
 //   resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
 //   // console.log(event);
 //  }
+
+ 
+
 // startBtn.onclick = () => {
 //   recognition.start();
 // }
@@ -488,11 +503,12 @@ var w = 1320,
       console.log(myWords);
       };
       setInterval(wordcloud,3000);
-   
+      
     // 'ayoutの出力を受け取り単語を描画
     function draw(words) {
+           var socket;
+           socket = io.connect("http://localhost:3000");
            svg
-    
           // style using semantic ui
           .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")")
           

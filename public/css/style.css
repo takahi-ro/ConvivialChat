@@ -45,25 +45,33 @@ video {
     display: grid;
     grid-template-columns: 30% 40% 30%;
     gap: 8px;
-    margin: 0 8px;
+    margin:0 16px;
   }
   
  .remote-stream{
     display: grid;
     grid-template-columns:20% 20% 20% 20% 20%;
   }
- 
   .room .remote-streams {
     background-color: #f6fbff;
-    grid-template-columns:20% 20% 20% 20% 20%;
   }
   
   .room .messages {
-    background-color: #eee;
+    background-color: rgb(223, 222, 222);
     min-height: 100px;
+    max-height: 200px;
     padding: 8px;
     margin-top: 0;
   }
+
+    
+  .messages {
+    width:95%;
+    /* white-space:normal; */ 
+    overflow-x:visible;
+    overflow-y:hide;
+   }
+  
 
   /* 以下はhomeのCSS */
   .oya{

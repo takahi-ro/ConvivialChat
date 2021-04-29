@@ -6,7 +6,7 @@
         <div class="remote-streams" id="js-remote-streams"></div>
       </div>
       
-      <div class="room">
+      <div class="room" >
         <div>
           <div class = "disable">
             <span id="js-room-mode"></span>:
@@ -41,15 +41,17 @@
         
 
         <div>
-          <pre class="messages" id="js-messages"></pre>
-          <p id="message"></p>
-          <input type="text" id="js-local-text">
+            <pre class="messages" id="js-messages"></pre>
+          <p id="message" style="display:none;"></p>
+          <form id="form" action="" method="get" accept-charset="utf-8">
+          <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block; margin-bottom:15px;" placeholder = "テキストを入力"></textarea>
           <button id="js-send-trigger" class = "btn btn-outline-primary">Say</button>
           <button id="js-send-trigger2" class = "btn btn-outline-primary">Send</button>
+          </form>
           <!-- <button id="" class = "btn btn-outline-primary">Send</button> -->
         </div>
       </div>
-      <p class="meta" id="js-meta"></p>
+      <p class="meta" id="js-meta" style = "margin-top:110px;width:100;display:none;"></p>
     </div>
  
 
@@ -60,10 +62,33 @@
 
     
      
+     <script>
+        // チャットのスクロールを一番したから開始するだ
+        window.onload = function() {
+        var form = document.getElementById('form');
+        var messages = document.getElementById('js-messages');
+
+        var scrollToBottom = () => {
+      messages.scrollTop = messages.scrollHeight;
+    };
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // 一番下までスクロール
+  
+        scrollToBottom();
+  
+    });
+    
+  };
+       
+
      
+     </script>
       <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
       <script src="https://d3js.org/d3.v5.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js" integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig==" crossorigin="anonymous"></script>
      
          
     
