@@ -52,8 +52,10 @@ video {
     display: grid;
     grid-template-columns:20% 20% 20% 20% 20%;
   }
+ 
   .room .remote-streams {
     background-color: #f6fbff;
+    grid-template-columns:20% 20% 20% 20% 20%;
   }
   
   .room .messages {
