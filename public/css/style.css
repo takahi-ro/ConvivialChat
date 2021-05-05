@@ -47,8 +47,9 @@ video {
     gap: 8px;
     margin:0 16px;
   }
-  
- .remote-stream{
+
+
+ .remote-streams{
     display: grid;
     grid-template-columns:20% 20% 20% 20% 20%;
   }
