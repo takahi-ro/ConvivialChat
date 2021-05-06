@@ -160,18 +160,35 @@ const Peer = window.Peer;
        
 
     
-    
+      SpeechToText();
       sendTrigger.addEventListener('click', onClickSend);
-      sendTrigger2.addEventListener('click', onClickSend);
+      sendTrigger2.addEventListener('click', onClickSend2);
       leaveTrigger.addEventListener('click', () => room.close(), { once: true }); 
       function onClickSend() {
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-            const startBtn = document.querySelector('#start-btn');
-            const stopBtn = document.querySelector('#stop-btn');
-            // const resultDiv = document.querySelector('#result-div');
-            SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+
+            room.send(localText.value)    
+            messages.textContent += `${Yourname.value}: ${localText.value}\n`;
+            localText.value = '';
+          }
+      }
+      function onClickSend2() {
+        // Send message to all of the peers in the room via websocket
+        if(localText.value == ''){
+          console.log("text value is null");}else{
+            room.send(localText.value)    
+            messages.textContent += `${Yourname.value}: ${localText.value}\n`;
+            localText.value = '';
+          }
+      }
+
+      function SpeechToText(){
+        const startBtn = document.querySelector('#start-btn');
+        const stopBtn = document.querySelector('#stop-btn');
+        // const resultDiv = document.querySelector('#result-div');
+        SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
         let recognition = new SpeechRecognition();
 
         recognition.lang = 'ja-JP';
@@ -188,6 +205,9 @@ const Peer = window.Peer;
               finalTranscript += transcript;
               room.send(event.results[event.results.length-1][0].transcript);
               messages.textContent += `${Yourname.value}: ${event.results[event.results.length-1][0].transcript}\n`;
+              // let finalspeech = `(音声）${event.results[event.results.length-1][0].transcript}`;
+              // room.send(finalspeech);
+              // messages.textContent += `${Yourname.value}: ${finalspeech}\n`;
               
               //チャットを一番下までスクロールさせる
               var scrollToBottom = () => {
@@ -219,11 +239,6 @@ const Peer = window.Peer;
         stopBtn.onclick = () => {
           recognition.stop();
         }//ここまでがSpeech to text
-
-            room.send(localText.value)    
-            messages.textContent += `${Yourname.value}: ${localText.value}\n`;
-            localText.value = '';
-          }
       }
     
    
