@@ -129,6 +129,16 @@ const Peer = window.Peer;
 
     room.on('data', ({ data, src }) => {
       // Show a message sent to the room and who sent
+    if(data.match(/「/)){
+      var msg = new SpeechSynthesisUtterance();
+      var text = data;
+      msg.volume = 1; //ボリューム
+      msg.rate = 1;  //レート
+      msg.pitch = 1; //ピッチ
+      msg.text = text;
+      msg.lang = 'ja-JP'; //言語
+      window.speechSynthesis.speak(msg);
+    }
       messages.textContent += `${src}: ${data}\n`;
       console.log(src);
       
@@ -168,9 +178,9 @@ const Peer = window.Peer;
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-
-            room.send(localText.value)    
-            messages.textContent += `${Yourname.value}: ${localText.value}\n`;
+            let saytext = `「${localText.value}」`;
+            room.send(saytext);
+            messages.textContent += `${Yourname.value}: ${saytext}\n`;
             localText.value = '';
           }
       }
@@ -178,7 +188,7 @@ const Peer = window.Peer;
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-            room.send(localText.value)    
+            room.send(localText.value);    
             messages.textContent += `${Yourname.value}: ${localText.value}\n`;
             localText.value = '';
           }
