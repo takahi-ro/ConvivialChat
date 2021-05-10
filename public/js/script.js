@@ -129,7 +129,7 @@ const Peer = window.Peer;
 
     room.on('data', ({ data, src }) => {
       // Show a message sent to the room and who sent
-    if(data.match(/「/)){
+    if(data.match(/『/)){
       var msg = new SpeechSynthesisUtterance();
       var text = data;
       msg.volume = 1; //ボリューム
@@ -139,8 +139,14 @@ const Peer = window.Peer;
       msg.lang = 'ja-JP'; //言語
       window.speechSynthesis.speak(msg);
     }
-      messages.textContent += `${src}: ${data}\n`;
+      messages.textContent += `${data}\n`;
       console.log(src);
+
+      //下までチャットをスクロールさせる
+      var scrollToBottom = () => {
+        messages.scrollTop = messages.scrollHeight;
+      };
+      scrollToBottom();
       
     });
 
@@ -178,9 +184,10 @@ const Peer = window.Peer;
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-            let saytext = `「${localText.value}」`;
-            room.send(saytext);
-            messages.textContent += `${Yourname.value}: ${saytext}\n`;
+            let saytext = `『${localText.value}』`;
+            let senddata1 = `${Yourname.value}: ${saytext}`;
+            room.send(senddata1);
+            messages.textContent += `${senddata1}\n`;
             localText.value = '';
           }
       }
@@ -188,8 +195,9 @@ const Peer = window.Peer;
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-            room.send(localText.value);    
-            messages.textContent += `${Yourname.value}: ${localText.value}\n`;
+            let senddata2 = `${Yourname.value}: ${localText.value}`;
+            room.send(senddata2);    
+            messages.textContent += `${senddata2}\n`;
             localText.value = '';
           }
       }
@@ -213,8 +221,10 @@ const Peer = window.Peer;
             let transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
               finalTranscript += transcript;
-              room.send(event.results[event.results.length-1][0].transcript);
-              messages.textContent += `${Yourname.value}: ${event.results[event.results.length-1][0].transcript}\n`;
+              let speechtext = `「${event.results[event.results.length-1][0].transcript}」`;
+              let senddata3 =  `${Yourname.value}:${speechtext}`;
+              room.send(senddata3);
+              messages.textContent +=`${senddata3}\n`;
               // let finalspeech = `(音声）${event.results[event.results.length-1][0].transcript}`;
               // room.send(finalspeech);
               // messages.textContent += `${Yourname.value}: ${finalspeech}\n`;
