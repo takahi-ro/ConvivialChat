@@ -1,6 +1,6 @@
 
     <div class="parent">
-      <h1 class="heading" style="border-bottom: 1px solid #000;">Room example</h1>
+      <!-- <h1 class="heading" style="border-bottom: 1px solid #000;">Room example</h1> -->
       
       
       <div class="remote-streams" id="js-remote-streams">
@@ -8,7 +8,7 @@
       </div>
       
       <div class="room" >
-        <div>
+        <div style="margin-top: 50px;">
           <div class = "disable">
             <span id="js-room-mode"></span>:
             <input type="text" placeholder="Room Name" id="js-room-id" value ="<%= value1 %>">
@@ -39,15 +39,18 @@
         
         </div>
 
-        <div  id="cloud"></div>
+        <div  id="cloud">
+          <!-- <pre class="messages" id="js-messages" style = "margin-top:80px;"></pre> -->
+        </div>
         
         
 
-        <div style = "margin-top:30px">
-            <pre class="messages" id="js-messages"></pre>
+        <div style = "margin-left:30px">
+          <pre class="messages" id="js-messages" style = "margin-top:50px;"></pre>
           <p id="message" style="display:none;"></p>
           <form id="form" action="" method="get" accept-charset="utf-8">
-          <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block; margin-bottom:15px;" placeholder = "テキストを入力"></textarea>
+          <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block;margin-bottom:15px;" placeholder = "テキストを入力"></textarea>
+          <!-- <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block; margin-top:90px;margin-bottom:15px;" placeholder = "テキストを入力"></textarea> -->
           <button id="js-send-trigger" class = "btn btn-outline-primary" style="margin-left:195px;margin-right:5px;">Say</button>
           <button id="js-send-trigger2" class = "btn btn-outline-primary">Send</button>
           </form>

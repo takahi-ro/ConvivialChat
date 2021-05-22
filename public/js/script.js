@@ -16,6 +16,7 @@ const Peer = window.Peer;
   const sdkSrc = document.querySelector('script[src*=skyway]');
   const Yourname = document.getElementById('dami');
   var form = document.getElementById('form');
+  var targettext;
 
   var msg = new SpeechSynthesisUtterance();
   meta.innerText = `
@@ -129,8 +130,8 @@ const Peer = window.Peer;
 
     room.on('data', ({ data, src }) => {
       // Show a message sent to the room and who sent
-    if(data.match(/『/)){
-      var msg = new SpeechSynthesisUtterance();
+    if(data.match(/「/)){
+      var msg = new SeechSynthesisUtterance();
       var text = data;
       msg.volume = 1; //ボリューム
       msg.rate = 1;  //レート
@@ -180,35 +181,46 @@ const Peer = window.Peer;
       sendTrigger.addEventListener('click', onClickSend);
       sendTrigger2.addEventListener('click', onClickSend2);
       leaveTrigger.addEventListener('click', () => room.close(), { once: true }); 
+
       function onClickSend() {
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
-            let saytext = `『${localText.value}』`;
+             //ワードクラウド（以下4行）
+            // targettext = myWords.push({
+            //   word: localText.value,size: Math.floor((Math.random()+0.1)*30)  
+            //   });
+            //   WordCloud();
+            let saytext = `「${localText.value}」`;
             let senddata1 = `${Yourname.value}: ${saytext}`;
             room.send(senddata1);
             messages.textContent += `${senddata1}\n`;
             localText.value = '';
+           
           }
       }
       function onClickSend2() {
         // Send message to all of the peers in the room via websocket
         if(localText.value == ''){
           console.log("text value is null");}else{
+            //ワードクラウド（以下4行）
+            // targettext = myWords.push({
+            //   word: localText.value,size: Math.floor((Math.random()+0.1)*30)  
+            //   });
+            //   WordCloud();
             let senddata2 = `${Yourname.value}: ${localText.value}`;
             room.send(senddata2);    
             messages.textContent += `${senddata2}\n`;
             localText.value = '';
+          
           }
-      }
-
+         }
       function SpeechToText(){
         const startBtn = document.querySelector('#start-btn');
         const stopBtn = document.querySelector('#stop-btn');
         // const resultDiv = document.querySelector('#result-div');
         SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
         let recognition = new SpeechRecognition();
-
         recognition.lang = 'ja-JP';
         recognition.interimResults = true;
         recognition.continuous = true;
@@ -221,7 +233,7 @@ const Peer = window.Peer;
             let transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
               finalTranscript += transcript;
-              let speechtext = `「${event.results[event.results.length-1][0].transcript}」`;
+              let speechtext = `『${event.results[event.results.length-1][0].transcript}』`;
               let senddata3 =  `${Yourname.value}:${speechtext}`;
               room.send(senddata3);
               messages.textContent +=`${senddata3}\n`;
@@ -235,14 +247,13 @@ const Peer = window.Peer;
               };
               scrollToBottom();
            
-            
-              // for(i=0; i<event.results.length;i ++){
-              
-              //      targettext = myWords.push({
-              //       word: event.results[i][0].transcript,size: Math.floor((Math.random()+0.1)*30)
-                    
-              //     });
-              // }
+            //ワードクラウド
+                  // targettext = myWords.push({
+                  // word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)  
+                  // });
+                  // WordCloud();
+                  
+
             } else {
               interimTranscript = transcript;
             }
@@ -260,7 +271,8 @@ const Peer = window.Peer;
           recognition.stop();
         }//ここまでがSpeech to text
       }
-    
+
+      
    
   });
 
@@ -293,116 +305,6 @@ const ClickJoinButton = () =>{
 };
 
 setTimeout(ClickJoinButton,3000)
-
-
-
-
-
-
-
-
-// これはSpeech to text 
-// const startBtn = document.querySelector('#start-btn');
-// const stopBtn = document.querySelector('#stop-btn');
-// const resultDiv = document.querySelector('#result-div');
-
-// // この↓2つはワードクラウド
-// var myWords =[
-//   // {"word":"イノシシ","size":10}
-//   // {"word":"おにやんま","size":6},
-//   // {"word":"ゆるっと","size":8},
-//   // {"word":"映画","size":6},
-//   // {"word":"ヘルシンキ","size":20},
-//   // {"word":"メタリカ","size":15},
-//   // {"word":"お面","size":10},
-//   // {"word":"おいしい","size":20},
-//   // {"word":"クリプト","size":19},
-//   // {"word":"神戸","size":12},
-//   // {"word":"ザッパ","size":20},
-//   // {"word":"大崎ゲート","size":18},
-//   // {"word":"テスト","size":10},
-//   // {"word":"テント","size":20},
-//   // {"word":"滝","size":20},
-//   // {"word":"アジャイル","size":10},
-//   // {"word":"ヤードバーズ","size":12},
-//   // {"word":"恵比寿","size":12},
-//   // {"word":"私の名前は藤井孝弘です","size":15}
-// ];
-
-// var targettext;
-
-
-
-// SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-// let recognition = new SpeechRecognition();
-
-// recognition.lang = 'ja-JP';
-// recognition.interimResults = true;
-// recognition.continuous = true;
-
-// let finalTranscript = ''; // 確定した(黒の)認識結果
-// console.log(myWords);
-// recognition.onresult = (event) => {
-//   let interimTranscript = ''; // 暫定(灰色)の認識結果
-//   for (let i = event.resultIndex; i < event.results.length; i++) {
-//     let transcript = event.results[i][0].transcript;
-//     if (event.results[i].isFinal) {
-//       finalTranscript += transcript;
-//       //以下はテキストからスピーチ
-      
-//       // for(i=0; i<event.results.length;i ++){
-//         // var midiumtext = JSON.parse(DATA_FILE_PATH)
-        
-//         // var targettext = DATA_FILE_PATH.word.push({word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)});
-      
-//            targettext = myWords.push({
-//             word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)
-            
-//           });
-//           // console.log(myWords);
-       
-          
-//     WordCloud();
-          
-          
-          
-
-//         // var PushJSON = (i) => {
-//         //   var json = $.getJSON("../data/word.json", (data) => {
-//         //     data.push({
-//         //       word: event.results[i][0].transcript,count:Math.floor(Math.random()*30)
-//         //     });
-//         //     console.log(data);
-//         //     DATA_FILE_PATH = data;
-//         //   });
-//         // }
-//         // PushJSON(i);
-        
-       
-//         // DATA_FILE_PATH = WORDDATA;
-        
-//         // DATA_FILE_PATH = JSON.stringify(Targettext);
-//         // console.log(Targettext)
-    
-//       // }
-//     } else {
-//       interimTranscript = transcript;
-//     }
-//   }
-//   resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
-//   // console.log(event);
-//  }
-
- 
-
-// startBtn.onclick = () => {
-//   recognition.start();
-// }
-// stopBtn.onclick = () => {
-//   recognition.stop();
-// }
-
-
 
 
 //以下はテキストtoスピーチ
@@ -508,6 +410,16 @@ Speech.prototype.event = function(){
 
 
 // ここからはワードクラウド
+var myWords =[
+  //   // {"word":"イノシシ","size":10}
+  //   // {"word":"おにやんま","size":6},
+  //   // {"word":"ゆるっと","size":8},
+  //   // {"word":"映画","size":6},
+  //   // {"word":"ヘルシンキ","size":20},
+  //   // {"word":"メタリカ","size":15},
+  //   // {"word":"お面","size":10},
+  //   // {"word":"おいしい","size":20},
+  ];
 var w = 1320,
     h = 1078,
     sizeScale = d3.scaleLinear().domain([0, myWords.length]).range([10, 100]),
@@ -525,7 +437,8 @@ var w = 1320,
   
   // インスタンスの作成
 
-    var WordCloud = (wordcloud) =>{
+    var WordCloud = (wordcloud) => {
+      
       layout
       .size([w, h])
       .words(myWords.map( function (d) { return { text: d.word, size: sizeScale(d.size)}; }))
@@ -541,8 +454,8 @@ var w = 1320,
       
     // 'ayoutの出力を受け取り単語を描画
     function draw(words) {
-           var socket;
-           socket = io.connect("http://localhost:3000");
+          //  var socket;
+          //  socket = io.connect("http://localhost:3000");
            svg
           // style using semantic ui
           .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")")
