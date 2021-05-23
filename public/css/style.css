@@ -68,8 +68,8 @@ video {
     
   .messages {
     width:95%;
-    /* white-space:normal; */ 
-    overflow-x:visible;
+    white-space:pre-wrap;
+    /* overflow-x:visible; */
     overflow-y:hide;
    }
   
