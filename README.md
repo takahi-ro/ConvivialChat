@@ -1,2 +1,2 @@
 # Sotuken
-develop teleconference tool
+developing teleconversation tool
