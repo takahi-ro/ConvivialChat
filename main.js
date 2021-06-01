@@ -12,7 +12,7 @@ const express = require("express"),
   
 
   mongoose.connect(
-    process.env.MONGODB_URI || "mongodb+srv://takahiro:<password>@sotuken.bxe1b.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    process.env.MONGODB_URI || "mongodb://localhost:27017/skyway_db",
     {useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify:false,useCreateIndex:true}
   );
   // ヘロクデプロイ前
