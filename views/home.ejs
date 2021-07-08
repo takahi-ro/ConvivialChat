@@ -8,7 +8,7 @@
       </div>
       
       <div class="room" >
-        <div style="margin-top: 50px;">
+        <div style="margin-top: 50px;margin-left: 10px;">
           <div class = "disable">
             <span id="js-room-mode"></span>:
             <input type="text" placeholder="Room Name" id="js-room-id" value ="<%= value1 %>">
@@ -30,35 +30,37 @@
                   <span class="round-btn"></span>
                 </div>
               </div>
-         <!-- この下がワードクラウドのオンオフ -->
-          <p>音声入力</p>
-          <button id="start-btn" class = "btn btn-outline-primary" style = "margin-right:5px;">start</button>
-          <button id="stop-btn"class = "btn btn-outline-primary">stop</button>
-          <div id="result-div" ></div>
-          <button onclick="location.href='<%= `/` %>'" id="js-leave-trigger" class = "btn btn-danger" style ="margin-top:80px;display:block;">Leave</button>
+        
+          <button onclick="location.href='<%= `/` %>'" id="js-leave-trigger" class = "btn btn-danger" style ="margin-top:120px;display:block;">Leave</button>
         
         </div>
 
         <div  id="cloud">
-          <!-- <pre class="messages" id="js-messages" style = "margin-top:80px;"></pre> -->
+          <pre class="messages" id="js-messages" style = "margin-top:80px;"></pre>
         </div>
         
         
 
         <div style = "margin-left:30px">
-          <pre class="messages" id="js-messages" style = "margin-top:50px;"></pre>
+          <!-- <pre class="messages" id="js-messages" style = "margin-top:50px;"></pre> -->
           <p id="message" style="display:none;"></p>
           <form id="form" action="" method="get" accept-charset="utf-8">
-          <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block;margin-bottom:15px;" placeholder = "テキストを入力"></textarea>
-          <!-- <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block; margin-top:90px;margin-bottom:15px;" placeholder = "テキストを入力"></textarea> -->
+          <!-- <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block;margin-bottom:15px;" placeholder = "テキストを入力"></textarea> -->
+          <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block; margin-top:90px;margin-bottom:15px;" placeholder = "テキストを入力"></textarea>
           <button id="js-send-trigger" class = "btn btn-outline-primary" style="margin-left:195px;margin-right:5px;">Say</button>
           <button id="js-send-trigger2" class = "btn btn-outline-primary">Send</button>
           </form>
        
-        
+         <!-- この下がワードクラウドのオンオフ -->
+         <p style = "margin-left:200px; margin-top:18px;  margin-bottom:5px;">音声入力</p>
+         <button id="start-btn" class = "btn btn-outline-primary" style = "margin-right:5px; margin-left:195px">start</button>
+         <button id="stop-btn"class = "btn btn-outline-primary">stop</button>
+         <div id="result-div" ></div>
         </div>
+
+        <p class="meta" id="js-meta" style = "margin-top:110px;width:100;display:none;"></p>
       </div>
-      <p class="meta" id="js-meta" style = "margin-top:110px;width:100;display:none;"></p>
+      
     </div>
  
 
@@ -68,6 +70,12 @@
     
 
     
+
+
+
+
+
+      
      
      <script>
         // チャットのスクロールを一番したから開始するだ
