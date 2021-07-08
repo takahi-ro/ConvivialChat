@@ -134,7 +134,7 @@ const Peer = window.Peer;
     room.on('data', ({ data, src }) => {
       // Show a message sent to the room and who sent
       if (data.match(/「/)) {
-        var msg = new SeechSynthesisUtterance();
+        var msg = new SpeechSynthesisUtterance();
         var text = data;
         msg.volume = 1; //ボリューム
         msg.rate = 1;  //レート
