@@ -3,31 +3,31 @@
 html,
 body,
 div {
- 
   margin: 0;
   padding: 0;
 }
-
-
-/* global styles */
-.parent{
-width:100%;
-height:100%;
+html,body{
+  height: 100%;
+  font-family: "メイリオ" ;
+  /* background-color:#b4deff; */
 }
 
+/* global styles */
+
+/* 
 video {
   background-color: #111;
   width: 100%;
-}
-
+} */
+/* 
 .heading {
   text-align: center;
   margin-bottom: 0;
-}
-
+} */
+/* 
 .note {
   text-align: center;
-}
+} */
 
 .meta {
   text-align: center;
@@ -42,30 +42,54 @@ video {
 }
 
 .room {
+    height:100%;
     display: grid;
-    grid-template-columns: 30% 40% 30%;
-    gap: 8px;
-    margin: 0 8px;
+    grid-template-columns: 25% 45% 30%;
+    /* gap: 8px; */
+    margin:0;
+    
   }
-  
- .remote-stream{
+
+/* 
+ .remote-streams{
+    
     display: grid;
     grid-template-columns:20% 20% 20% 20% 20%;
-  }
-  .room .remote-streams {
+   
+  } */
+  /* .room .remote-streams {
     background-color: #f6fbff;
-  }
+  } */
+
   
-  .room .messages {
-    background-color: #eee;
-    min-height: 100px;
+  .messages {
+    /* margin-top:20px; */
+    margin:0 auto;
+    display: block;
+    /* background-color: rgb(223, 222, 222); */
+    background-color: #fff;
+    height:500px;
     padding: 8px;
-    margin-top: 0;
+    list-style-type: none;
+    width:94%;
+    overflow-y:hide;
+    padding: 0.5rem 1rem; 
+    overflow-x: visible;
+    white-space: pre-wrap;
+
   }
+
+  
+  
+ 
+
+    
+
+  
 
   /* 以下はhomeのCSS */
   .oya{
-    background-color:aqua;
+    background-color:#b4deff;
     height:100vh;
     width:100vw;
     margin:0;
@@ -131,7 +155,7 @@ video {
 .toggle-btn {
   width: 64px;
   height: 32px;
-  margin: 8px;
+  margin-left:10px;
   border-radius: 50px;
   display: inline-block;
   position: relative;
@@ -142,7 +166,7 @@ video {
   -o-transition: background-color .40s ease-in-out;
   transition: background-color .40s ease-in-out;
   cursor: pointer;
-  top:19px;
+ 
 }
   .toggle-btn.active {
     background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmUlEQVQ4T6WT0RWDMAhFeZs4ipu0mawZpaO4yevBc6hUIWLNd+4NeQDk5sE/PMkZwFvZywKSTxF5iUgH0C4JHGyF97IggFVSqyCFga0CvQSg70Mdwd8QSSr4sGBMcgavAgdvwQCtApvA2uKr1x7Pu++06ItrF5LXPB/CP4M0kKTwYRIDyRAOR9lJTuF0F0hOAJbKopVHOZN9ACS0UgowIx8ZAAAAAElFTkSuQmCC") no-repeat 10px center #2ecc71; }
@@ -175,6 +199,41 @@ video {
 
 
 
-/*# sourceMappingURL=style.css.map */
+/*ログインしたユーザー*/
+#loginUsers {
+  list-style-type: none;
+  padding: 0;
+  display: block;
+  background: #efefef;
+  background-color:#fff; 
+  width: 90%; 
+  margin:0 auto;
+  height:78.5%;
+  overflow-y:scroll;
+}
 
+#loginUsers>li {
+  padding: 0.5rem 0.5rem;
+}
 
+#LoginUsersBox {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  /* position: absolute; */
+  display: inline-block;
+  width: 100%;
+  background: #efefef;
+
+  /* border: thick double #32a1ce; */
+ 
+  /* IE, Edge 対応 */
+  /* -ms-overflow-style: none; */
+  /* Firefox 対応 */
+  /* scrollbar-width: none; */
+
+}
+
+/* #LoginUsersBox::-webkit-scrollbar {
+  display:none;
+} */
