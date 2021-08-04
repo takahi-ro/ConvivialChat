@@ -872,7 +872,7 @@ Speech.prototype.event = function () {
 
 
 
-// ここからはワードクラウド
+// ここからはワードクラウドのコード
 // let myWords =[
 //   //   // {"word":"イノシシ","size":10}
 //   //   // {"word":"おにやんま","size":6},
