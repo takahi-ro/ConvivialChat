@@ -14,10 +14,10 @@ recognition.continuous = true;
 
 
 //会話はじめるかどうか聞く。
-if(window.location.href == "http://localhost:3000/home"){
+if(window.location.href == "https://convivialchat.herokuapp.com/home"){
   let StartConv = confirm("会話を始めますか？");
   if(!StartConv){
-    window.location.href = "http://localhost:3000/";
+    window.location.href = "https://convivialchat.herokuapp.com/";
   }else{
     //音声認識をはじめる
    
@@ -572,7 +572,7 @@ if(window.location.href == "http://localhost:3000/home"){
       let StartConv = confirm("本当に退出しますか？");
       if (StartConv) {
         () => room.close(), { once: true }
-        window.location.href = "http://localhost:3000/";
+        window.location.href = "https://convivialchat.herokuapp.com/";
       } else {
         return;
       }
