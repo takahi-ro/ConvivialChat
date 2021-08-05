@@ -1,4 +1,3 @@
-
 const Peer = window.Peer;
 const startBtn = document.querySelector('#start-btn');
 const stopBtn = document.querySelector('#stop-btn');
@@ -703,26 +702,32 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
       //音声入力のトグル
       let startClass = startBtn.classList;
       let stopClass = stopBtn.classList;
-      let sttTimer;
-      function startTimer(){
-        sttTimer = setInterval(()=>{
-          recognition.start();
-          console.log("start!");
-        },10000);
-      };
-      function stopTimer(){
-        clearInterval(sttTimer);
-        };
+     
+          recognition.onend = function() { 
+            if(stopClass.contains('btn-outline-danger')){
+              console.log('recognition restarted!');
+              try {
+                recognition.start(); 
+              }
+              catch(error) {
+                console.error('音声認識は既に開始されています', error);
+              }
+            }
+          };
+        
+        
 
       startBtn.onclick = () => {
-        // console.log(startClass);
         let sttStartMessages = document.getElementById('message2');
         sttStartMessages.textContent = "Speech recogniton is supported!"
-        recognition.start();             
-        startTimer();
+        try {
+          recognition.start(); 
+        }
+        catch(error) {
+          console.error('音声認識は既に開始されています', error);
+        }
+                  
        
-        // startClass = "btn btn-primary";
-        // stopClass = "btn btn-outline-danger";
         if(startClass.contains('btn-outline-primary')){
            startClass.remove('btn-outline-primary');
            startClass.add('btn-primary');
@@ -733,7 +738,7 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
       }
       stopBtn.onclick = () => {
         recognition.stop();
-        stopTimer();
+        // stopTimer();
         if(stopClass.contains('btn-outline-danger')){
           stopClass.remove('btn-outline-danger');
           stopClass.add('btn-danger');
