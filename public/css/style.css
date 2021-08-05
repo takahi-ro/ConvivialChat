@@ -65,10 +65,12 @@ video {
   .messages {
     /* margin-top:20px; */
     margin:0 auto;
+    margin-top:15px;
+    margin-bottom:15px;
     display: block;
     /* background-color: rgb(223, 222, 222); */
     background-color: #fff;
-    height:78%;
+    height:500px;
     padding: 8px;
     list-style-type: none;
     width:94%;
