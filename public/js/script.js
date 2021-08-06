@@ -1,3 +1,4 @@
+
 const Peer = window.Peer;
 const startBtn = document.querySelector('#start-btn');
 const stopBtn = document.querySelector('#stop-btn');
@@ -13,11 +14,11 @@ recognition.continuous = true;
 
 
 //会話はじめるかどうか聞く。
-if(window.location.href == "https://convivialchat.herokuapp.com/home"){
-  let StartConv = confirm("会話を始めますか？");
-  if(!StartConv){
-    window.location.href = "https://convivialchat.herokuapp.com/";
-  }else{
+// if(window.location.href == "http://localhost:3000/home"){
+//   let StartConv = confirm("会話を始めますか？");
+//   if(!StartConv){
+//     window.location.href = "http://localhost:3000/";
+//   }else{
     //音声認識をはじめる
    
     setTimeout(()=>{
@@ -26,9 +27,9 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
       
     },4000);
    
-    
-  }
-}
+  
+//   }
+// }
 
  
 
@@ -338,7 +339,7 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
           msg2.text = text2;
           msg2.volume = 2;
           msg2.rate = 3;
-          msg2.pitch = 2;
+          msg2.pitch = 1.5;
           window.speechSynthesis.speak(msg2);
           scrollToBottom();
           break;
@@ -395,7 +396,7 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
       msg.text = text;
       msg.volume = 1;
       msg.rate = 3;
-      msg.pitch = 2;
+      msg.pitch = 1.5;
       window.speechSynthesis.speak(msg);
     
 
@@ -703,51 +704,51 @@ if(window.location.href == "https://convivialchat.herokuapp.com/home"){
       let startClass = startBtn.classList;
       let stopClass = stopBtn.classList;
      
-          recognition.onend = function() { 
-            if(stopClass.contains('btn-outline-danger')){
-              console.log('recognition restarted!');
-              try {
-                recognition.start(); 
-              }
-              catch(error) {
-                console.error('音声認識は既に開始されています', error);
-              }
-            }
-          };
+          // recognition.onend = function() { 
+          //   if(stopClass.contains('btn-outline-danger')){
+          //     console.log('recognition restarted!');
+          //     try {
+          //       recognition.start(); 
+          //     }
+          //     catch(error) {
+          //       console.error('音声認識は既に開始されています', error);
+          //     }
+          //   }
+          // };
         
         
 
       startBtn.onclick = () => {
         let sttStartMessages = document.getElementById('message2');
         sttStartMessages.textContent = "Speech recogniton is supported!"
-        try {
-          recognition.start(); 
-        }
-        catch(error) {
-          console.error('音声認識は既に開始されています', error);
-        }
+        // try {
+        //   recognition.start(); 
+        // }
+        // catch(error) {
+        //   console.error('音声認識は既に開始されています', error);
+        // }
                   
        
-        if(startClass.contains('btn-outline-primary')){
-           startClass.remove('btn-outline-primary');
-           startClass.add('btn-primary');
-           stopClass.remove('btn-danger');
-           stopClass.add('btn-outline-danger');
-        }
-        // startBtn.removeClass()
+  //       if(startClass.contains('btn-outline-primary')){
+  //          startClass.remove('btn-outline-primary');
+  //          startClass.add('btn-primary');
+  //          stopClass.remove('btn-danger');
+  //          stopClass.add('btn-outline-danger');
+  //       }
+  //       // startBtn.removeClass()
       }
-      stopBtn.onclick = () => {
-        recognition.stop();
-        // stopTimer();
-        if(stopClass.contains('btn-outline-danger')){
-          stopClass.remove('btn-outline-danger');
-          stopClass.add('btn-danger');
-          startClass.remove('btn-primary');
-          startClass.add('btn-outline-primary');
-       }
-        // startClass = "btn btn-outline-primary";
-        // stopClass = "btn btn-danger";
-      }//ここまでがSpeech to text
+    //   stopBtn.onclick = () => {
+    //     recognition.stop();
+    //     // stopTimer();
+    //     if(stopClass.contains('btn-outline-danger')){
+    //       stopClass.remove('btn-outline-danger');
+    //       stopClass.add('btn-danger');
+    //       startClass.remove('btn-primary');
+    //       startClass.add('btn-outline-primary');
+    //    }
+    //     // startClass = "btn btn-outline-primary";
+    //     // stopClass = "btn btn-danger";
+    //   }//ここまでがSpeech to text
     }
 
     
@@ -770,14 +771,31 @@ $('.cb-value').click(function () {
   let mainParent = $(this).parent('.toggle-btn');
   if ($(mainParent).find('input.cb-value').is(':checked')) {
     $(mainParent).addClass('active');
+    recognition.start();
 
   } else {
     $(mainParent).removeClass('active');
-
+    recognition.stop();
   }
 })
 
+let toggleBotton = document.getElementById('onoff2');
+let toggleBottonClass = toggleBotton.classList;
 
+
+
+
+        recognition.onend = function() { 
+            if(toggleBottonClass.contains('active')){
+              console.log('recognition restarted!');
+              try {
+                recognition.start(); 
+              }
+              catch(error) {
+                console.error('音声認識は既に開始されています', error);
+              }
+            }
+          };
 
 //JOINボタンをクリックする
 const ClickJoinButton = () => {
