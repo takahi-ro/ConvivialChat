@@ -8,6 +8,9 @@ let recognition = new SpeechRecognition();
 recognition.lang = 'ja-JP';
 recognition.interimResults = true;
 recognition.continuous = true;
+//Text to Speech の準備
+let synth = window.speechSynthesis;
+
 
 
 
@@ -19,19 +22,19 @@ recognition.continuous = true;
 //   if(!StartConv){
 //     window.location.href = "http://localhost:3000/";
 //   }else{
-    //音声認識をはじめる
-   
-    setTimeout(()=>{
 
-     startBtn.click();
-      
-    },4000);
-   
-  
+//音声認識が使用可能ということを示すふりをしているコード。いらないかもしれない
+setTimeout(() => {
+
+  startBtn.click();
+
+}, 4000);
+
+
 //   }
 // }
 
- 
+
 
 (async function main() {
   // const localVideo = document.getElementById('js-local-stream');
@@ -61,7 +64,8 @@ recognition.continuous = true;
   let heee = document.getElementById('heee');
   let uun = document.getElementById('uun');
   let ooo = document.getElementById('ooo');
- 
+  let hahaha = document.getElementById('hahaha');
+
   meta.innerText = `
     UA: ${navigator.userAgent}
     SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}
@@ -111,8 +115,6 @@ recognition.continuous = true;
     } else {
       localStream.getAudioTracks().forEach((track) => (track.enabled = false));
     }
-    // console.log(onoff);
-    // console.log(onoff2);
   }
   setInterval(onoffSwitch, 1000);
 
@@ -137,12 +139,11 @@ recognition.continuous = true;
       stream: localStream
     });
 
-   //自分のPeerId入れる
+    //自分のPeerId入れる
     MypeerId = room._peerId;
-     
+
 
     room.once('open', () => {
-      console.log(MypeerId);
       messages.textContent += '=== あなたが参加しました ===\n\n';
       let selfItem = document.createElement('li');
       selfItem.id = MypeerId;
@@ -150,13 +151,12 @@ recognition.continuous = true;
       loginUsers.appendChild(selfItem);
       //追加したコード：名前送れるかも
       // room.send(Yourname.value)
-      room.send({name:Yourname.value,type:"open"});
-     //接続したときに、すでに以前からログインずみの人達を表示する
+      room.send({ name: Yourname.value, type: "open" });
+      //接続したときに、すでに以前からログインずみの人達を表示する
       peer.listAllPeers((peers) => {
-        console.log(peers);
         let items = [];
-        for(i=0;i<peers.length-1;i++){
-          items[i]=document.createElement('li');
+        for (i = 0; i < peers.length - 1; i++) {
+          items[i] = document.createElement('li');
           items[i].id = peers[i];
           loginUsers.appendChild(items[i]);
         }
@@ -165,16 +165,16 @@ recognition.continuous = true;
 
     });
 
-  
+
 
     room.on('peerJoin', (peerId) => {
       let item = document.createElement('li');
       item.id = peerId;
       loginUsers.appendChild(item);
-      
+
       // messages.textContent += `=== ${peerId} joined ===\n`;
-      
-      let yourdata = {name:Yourname.value,type:"login",peerId:MypeerId};
+
+      let yourdata = { name: Yourname.value, type: "login", peerId: MypeerId };
       room.send(yourdata);
 
       //チャット下までスクロール
@@ -198,63 +198,76 @@ recognition.continuous = true;
     });
 
 
+    //リアクションボタンを受け取るための関数
+    function receiveReaction(content,sayText,volume,rate,pitch){
+      messages.textContent += content;
+      if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
+        if (synth.speaking) {
+          console.error('speechSynthesis.speaking');
+          return;
+      }
+      }
+      let msg = new SpeechSynthesisUtterance();
+      let text = sayText;
+      msg.text = text;
+      msg.volume = volume;
+      msg.rate = rate;
+      msg.pitch = pitch;
+      synth.speak(msg);
+      scrollToBottom();
+    }
 
-
-
+  
     room.on('data', ({ data, src }) => {
-     
+
       // Show a message sent to the room and who sent
-      switch(data.type){
+      switch (data.type) {
         case 'login':
           //ログイン時に前からいるユーザーを表示
           peer.listAllPeers((peers) => {
-          console.log(loginChildren.length);
-          console.log(data.peerId);
-          let createUsers = ()=>{
-            if(loginChildren.length<peers.length){
-              setTimeout(createUsers,1000);
-            }
-            console.log(loginChildren.length);
-            for(i=0;i<loginChildren.length;i++){
-              if(loginChildren[i].id == data.peerId){
-                loginChildren[i].textContent = data.name;
-            }
-          }
-        };
-  
-          createUsers(); 
-    
+            let createUsers = () => {
+              if (loginChildren.length < peers.length) {
+                setTimeout(createUsers, 1000);
+              }
+              for (i = 0; i < loginChildren.length; i++) {
+                if (loginChildren[i].id == data.peerId) {
+                  loginChildren[i].textContent = data.name;
+                }
+              }
+            };
+
+            createUsers();
+
           });
           break;
         case 'say':
-            let msg = new SpeechSynthesisUtterance();
-            let text = data.msg;
-            msg.text = text;
-            window.speechSynthesis.speak(msg);
-            if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
-              // 後方一致のときの処理
-              messages.textContent += `\n\n${data.msg}\n`;
-            }else{
-              messages.textContent += `${data.msg}\n`;
-            }
-            // console.log(src);
-            for (i = 0; i < loginChildren.length; i++) {
-              if (loginChildren[i].textContent == data.name + "が入力中....") {
-                loginChildren[i].textContent = data.name;
-              }
-            }
-            for(i=0;i<userAdd.length;i++){
-              if(userAdd[i].name == data.name){
-                userAdd = userAdd.splice(i,1);
-              }
-            }
-            scrollToBottom();
-            break;
-        case 'send':
-          if(messages.textContent.endsWith('👍')|| messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+          let msg = new SpeechSynthesisUtterance();
+          let text = data.msg;
+          msg.text = text;
+          synth.speak(msg);
+          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
             // 後方一致のときの処理
             messages.textContent += `\n\n${data.msg}\n`;
-          }else{
+          } else {
+            messages.textContent += `${data.msg}\n`;
+          }
+          for (i = 0; i < loginChildren.length; i++) {
+            if (loginChildren[i].textContent == data.name + "が入力中....") {
+              loginChildren[i].textContent = data.name;
+            }
+          }
+          for (i = 0; i < userAdd.length; i++) {
+            if (userAdd[i].name == data.name) {
+              userAdd = userAdd.splice(i, 1);
+            }
+          }
+          scrollToBottom();
+          break;
+        case 'send':
+          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
+            // 後方一致のときの処理
+            messages.textContent += `\n\n${data.msg}\n`;
+          } else {
             messages.textContent += `${data.msg}\n`;
           }
 
@@ -263,19 +276,18 @@ recognition.continuous = true;
               loginChildren[i].textContent = data.name;
             }
           }
-          for(i=0;i<userAdd.length;i++){
-            if(userAdd[i].name == data.name){
-              userAdd = userAdd.splice(i,1);
+          for (i = 0; i < userAdd.length; i++) {
+            if (userAdd[i].name == data.name) {
+              userAdd = userAdd.splice(i, 1);
             }
           }
-          // console.log(src);
           scrollToBottom();
           break;
         case 'speech':
-          if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
             // 後方一致のときの処理
             messages.textContent += `\n\n${data.msg}\n`;
-          }else{
+          } else {
             messages.textContent += `${data.msg}\n`;
           }
           for (i = 0; i < loginChildren.length; i++) {
@@ -283,40 +295,37 @@ recognition.continuous = true;
               loginChildren[i].textContent = data.name;
             }
           }
-          for(i=0;i<userAdd.length;i++){
-            if(userAdd[i].name == data.name){
-              userAdd = userAdd.splice(i,1);
+          for (i = 0; i < userAdd.length; i++) {
+            if (userAdd[i].name == data.name) {
+              userAdd = userAdd.splice(i, 1);
             }
           }
-          // console.log(src);
           scrollToBottom();
           break;
         case 'open':
-          loginChildren[loginChildren.length-1].textContent = data.name;
-          if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+          loginChildren[loginChildren.length - 1].textContent = data.name;
+          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
             // 後方一致のときの処理
             messages.textContent += `\n\n=== ${data.name} が参加しました ===\n\n`;
-          }else{
+          } else {
             messages.textContent += `=== ${data.name} が参加しました ===\n\n`;
           }
-          
-           scrollToBottom();
+
+          scrollToBottom();
           break;
         case 'typing':
-          for(i=0;i<loginChildren.length;i++){
-            if(loginChildren[i].id == data.peerId && loginChildren[i].textContent == data.name){
+          for (i = 0; i < loginChildren.length; i++) {
+            if (loginChildren[i].id == data.peerId && loginChildren[i].textContent == data.name) {
               loginChildren[i].textContent += "が入力中....";
-              console.log(loginChildren[i].id);
             }
           }
-         
+
           if (!userAdd.map(m => m.name).includes(data.name)) {
             userAdd.push(data);
-            console.log(userAdd)
           }
-          for(i=0;i<userAdd.length;i++){
-            if(userAdd[i].peerId == data.peerId){
-             userAdd.splice(i,1,data);
+          for (i = 0; i < userAdd.length; i++) {
+            if (userAdd[i].peerId == data.peerId) {
+              userAdd.splice(i, 1, data);
             }
           }
           break;
@@ -326,206 +335,150 @@ recognition.continuous = true;
               loginChildren[i].textContent = data.name;
             }
           }
-          for(i=0;i<userAdd.length;i++){
-            if(userAdd[i].name == data.name){
-              userAdd = userAdd.splice(i,1);
+          for (i = 0; i < userAdd.length; i++) {
+            if (userAdd[i].name == data.name) {
+              userAdd = userAdd.splice(i, 1);
             }
           }
           break;
         case 'good':
-          messages.textContent += '👍';
-          let msg2 = new SpeechSynthesisUtterance();
-          let text2 = 'いいね';
-          msg2.text = text2;
-          msg2.volume = 2;
-          msg2.rate = 3;
-          msg2.pitch = 1.5;
-          window.speechSynthesis.speak(msg2);
-          scrollToBottom();
+          receiveReaction('👍','いいね',2,3,1.5);
           break;
         case 'heee':
-          messages.textContent += '😦';
-          let msg3 = new SpeechSynthesisUtterance();
-          let text3 = 'へえぇぇ';
-          msg3.text = text3;
-          msg3.volume = 1;
-          msg3.rate = 1;
-          msg3.pitch = 2;
-          window.speechSynthesis.speak(msg3);
-          scrollToBottom();
+          receiveReaction('😦','へえぇぇ',1,1,2);
           break;
         case 'uun':
-          messages.textContent += '🤔';
-          let msg4 = new SpeechSynthesisUtterance();
-          let text4 = 'うぅうーん';
-          msg4.text = text4;
-          msg4.volume = 1;
-          msg4.rate = 1;
-          msg4.pitch = 1;
-          window.speechSynthesis.speak(msg4);
-          scrollToBottom();
+          receiveReaction('🤔','うぅうーん',1,1,1);
           break;
 
         case 'ooo':
-          messages.textContent += '😮';
-          let msg5 = new SpeechSynthesisUtterance();
-          let text5 = 'ぉおおぉお';
-          msg5.text = text5;
-          msg5.volume = 1;
-          msg5.rate = 1;
-          msg5.pitch = 1.9;
-          window.speechSynthesis.speak(msg5);
-          scrollToBottom();
+          receiveReaction('😮','ぉおおぉお',1,1,1.9);
           break;
-        
+
+        case 'hahaha':
+          receiveReaction('🤣','ゎはっはっ',1,1,2);
+          break;
+
       }
-
-     
-
     });
 
-    //👍ボタンを送る
-    good.addEventListener('click',(e)=>{
-      e.preventDefault();
-      messages.textContent += '👍';
-      let GoodSendData = {type:'good',name: Yourname.value, peerId: MypeerId};
+   
+
+    //リアクションボタンを送る
+    function SendReaction(content,type,sayText,volume,rate,pitch){
+      messages.textContent += content;
+      let GoodSendData = { type: type, name: Yourname.value, peerId: MypeerId };
       room.send(GoodSendData);
-
-      let msg = new SpeechSynthesisUtterance();
-      let text = 'いいね';
-      msg.text = text;
-      msg.volume = 1;
-      msg.rate = 3;
-      msg.pitch = 1.5;
-      window.speechSynthesis.speak(msg);
-    
-
+      if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
+        if (synth.speaking) {
+          console.error('speechSynthesis.speaking');
+          return;
+      }
+      }
+      let text = sayText;
+      let msg = new SpeechSynthesisUtterance(text);
+      let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+      msg.voice = Voices[0];
+      msg.volume = volume;
+      msg.rate = rate;
+      msg.pitch = pitch;
+      synth.speak(msg);
       scrollToBottom();
-    
+    }
+
+    good.addEventListener('click', (e) => {
+      e.preventDefault();
+      SendReaction('👍','good','いいね',1,3,1.5);
+
     })
 
-    heee.addEventListener('click',(e)=>{
+
+    heee.addEventListener('click', (e) => {
       e.preventDefault();
-      messages.textContent += '😦';
-      let GoodSendData = {type:'heee',name: Yourname.value, peerId: MypeerId};
-      room.send(GoodSendData);
-
-      let msg = new SpeechSynthesisUtterance();
-      let text = 'へえぇぇ';
-      msg.text = text;
-      msg.volume = 1;
-      msg.rate = 1;
-      msg.pitch = 2;
-      window.speechSynthesis.speak(msg);
-    
-
-      scrollToBottom();
-    
+      SendReaction('😦','heee','へえぇぇ',1,1,2);
     })
 
-    uun.addEventListener('click',(e)=>{
+    uun.addEventListener('click', (e) => {
       e.preventDefault();
-      messages.textContent += '🤔';
-      let GoodSendData = {type:'uun',name: Yourname.value, peerId: MypeerId};
-      room.send(GoodSendData);
-
-      let msg = new SpeechSynthesisUtterance();
-      let text = 'うぅうーん';
-      msg.text = text;
-      msg.volume = 1;
-      msg.rate = 1;
-      msg.pitch = 1;
-      window.speechSynthesis.speak(msg);
-      scrollToBottom();
+      SendReaction('🤔','uun','うぅうーん',1,1,1);
     })
 
-    ooo.addEventListener('click',(e)=>{
+    ooo.addEventListener('click', (e) => {
       e.preventDefault();
-      messages.textContent += '😮';
-      let GoodSendData = {type:'ooo',name: Yourname.value, peerId: MypeerId};
-      room.send(GoodSendData);
-
-      let msg = new SpeechSynthesisUtterance();
-      let text = 'ぉおおぉお';
-      msg.text = text;
-      msg.volume = 1;
-      msg.rate = 1;
-      msg.pitch = 1.9;
-      window.speechSynthesis.speak(msg);
-    
-
-      scrollToBottom();
-    
+      SendReaction('😮','ooo','ぉおおぉお',1,1,1.9);
     })
 
-      //入力中にデータを送る
-      form.addEventListener('input',function(e){
-        e.preventDefault();
-        actionTime = Date.now();
-        let typingData = {name:Yourname.value, type:"typing", time:actionTime, peerId:MypeerId};
-        room.send(typingData);
-        if(loginChildren[0].textContent == Yourname.value){
-          loginChildren[0].textContent += "が入力中....";
+    hahaha.addEventListener('click', (e) => {
+      e.preventDefault();
+      SendReaction('🤣','hahaha','ゎはっはっ',1,1,2);
+    })
+
+
+
+
+    //入力中にデータを送る
+    form.addEventListener('input', function (e) {
+      e.preventDefault();
+      actionTime = Date.now();
+      let typingData = { name: Yourname.value, type: "typing", time: actionTime, peerId: MypeerId };
+      room.send(typingData);
+      if (loginChildren[0].textContent == Yourname.value) {
+        loginChildren[0].textContent += "が入力中....";
+      }
+
+      if (!userAdd.map(m => m.peerId).includes(MypeerId)) {
+        userAdd.push(typingData);
+      }
+      for (i = 0; i < userAdd.length; i++) {
+        if (userAdd[i].peerId == MypeerId) {
+          userAdd.splice(i, 1, typingData);
         }
-       
-        if (!userAdd.map(m => m.peerId).includes(MypeerId)) {
-          userAdd.push(typingData);
+      }
+
+
+    })
+    //時間がたてば入力中の表示を消去
+    setInterval(function () { updateTime(userAdd) }, 2000);
+
+    // //現在時刻更新と時間が経てば入力中消去
+    function updateTime(newUserAdd) {
+      NowTime = Date.now();
+      for (i = 0; i < newUserAdd.length; i++) {
+        if ((NowTime - newUserAdd[i].time) > 10000) {
+
+          userAdd2.push(newUserAdd[i]);
         }
-        for(i=0;i<userAdd.length;i++){
-          if(userAdd[i].peerId == MypeerId){
-           userAdd.splice(i,1,typingData);
+      }
+      for (i = 0; i < userAdd2.length; i++) {
+        for (j = 0; j < loginChildren.length; j++) {
+          if (loginChildren[j].textContent == `${userAdd2[i].name}が入力中....` && loginChildren[j].id == userAdd2[i].peerId) {
+            loginChildren[j].textContent = userAdd2[i].name;
+
+          }
+          if (i == userAdd2.length - 1 && j == loginChildren.length - 1) {
+            flag = true;
           }
         }
-        console.log(userAdd);
+      }
+      if (flag) {
+        userAdd = newUserAdd.filter(i => userAdd2.indexOf(i) == -1);
+        userAdd2 = [];
+        flag = false;
+      }
+    }
 
-      
-      })
-        //時間がたてば入力中の表示を消去
-        setInterval(function(){updateTime(userAdd)}, 2000);
-        
-       // //現在時刻更新と時間が経てば入力中消去
-       function updateTime(newUserAdd) {
-         NowTime = Date.now();
-        //  console.log(newUserAdd);
-         for (i = 0; i < newUserAdd.length; i++) {
-           if ((NowTime - newUserAdd[i].time) > 10000) {
 
-             userAdd2.push(newUserAdd[i]);
-               // console.log(userAdd2);
-           }
-         }
-         for (i = 0; i < userAdd2.length; i++) {
-           for (j = 0; j < loginChildren.length; j++) {
-             if (loginChildren[j].textContent == `${userAdd2[i].name}が入力中....` && loginChildren[j].id == userAdd2[i].peerId) {
-               loginChildren[j].textContent = userAdd2[i].name;
-
-             }
-             if (i == userAdd2.length - 1 && j == loginChildren.length - 1) {
-               flag = true;
-             }
-           }
-         }
-         if (flag) {
-           userAdd = newUserAdd.filter(i => userAdd2.indexOf(i) == -1);
-           // console.log(userAdd);
-           userAdd2 = [];
-           flag = false;
-         }
-       }
-         
-      
-      //テキストエリアの外を選択したら入力中が消えるようにする
-      localText.addEventListener('blur',(e)=>{
-          e.preventDefault();
-          console.log('blur');
-          let BlurSendData = {type:'Blur',name:Yourname.value, peerId:MypeerId};
-          room.send(BlurSendData);
-      if(loginChildren[0].textContent == Yourname.value +"が入力中...."){
+    //テキストエリアの外を選択したら入力中が消えるようにする
+    localText.addEventListener('blur', (e) => {
+      e.preventDefault();
+      let BlurSendData = { type: 'Blur', name: Yourname.value, peerId: MypeerId };
+      room.send(BlurSendData);
+      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
         loginChildren[0].textContent = Yourname.value;
       }
-      })
-  
-    
+    })
+
+
 
     // for closing room members
     room.on('peerLeave', peerId => {
@@ -538,19 +491,19 @@ recognition.continuous = true;
       // messages.textContent += `=== ${peerId} left ===\n`;
       for (i = 0; i < loginChildren.length; i++) {
         if (loginChildren[i].id == peerId) {
-          if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
             // 後方一致のときの処理
-            messages.textContent += `\n\n=== ${loginChildren[i].textContent.replace('が入力中....','')} が退出しました ===\n\n`;
-          }else{
-            messages.textContent += `=== ${loginChildren[i].textContent.replace('が入力中....','')} が退出しました ===\n\n`;
+            messages.textContent += `\n\n=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
+          } else {
+            messages.textContent += `=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
           }
           loginUsers.removeChild(loginChildren[i]);
 
-         
+
         }
       }
-       //チャット下までスクロール
-       let scrollToBottom = () => {
+      //チャット下までスクロール
+      let scrollToBottom = () => {
         messages.scrollTop = messages.scrollHeight;
       };
       scrollToBottom();
@@ -582,7 +535,7 @@ recognition.continuous = true;
 
 
 
-//下で定義した関数発動
+    //下で定義した関数発動
     SpeechToText();
     sendTrigger.addEventListener('click', onClickSend);
     sendTrigger2.addEventListener('click', onClickSend2);
@@ -599,26 +552,26 @@ recognition.continuous = true;
         //   WordCloud();
         let saytext = `「${localText.value.trim()}」`;
         let senddata1 = `${Yourname.value}: ${saytext}\n`;
-        let sendDataSet1 = {name:Yourname.value,msg:senddata1,type:"say"};
+        let sendDataSet1 = { name: Yourname.value, msg: senddata1, type: "say" };
         room.send(sendDataSet1);
-        if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+        if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
           // 後方一致のときの処理
           messages.textContent += `\n\n${senddata1}\n`;
-        }else{
+        } else {
           messages.textContent += `${senddata1}\n`;
-        }       
+        }
         localText.value = '';
       }
-       //送信したら入力中消去
-       if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-           loginChildren[0].textContent = Yourname.value;
-         }
-     
-         for(i=0;i<userAdd.length;i++){
-           if(userAdd[i].name == Yourname.value){
-             userAdd = userAdd.splice(i,1);
-           }
-         }
+      //送信したら入力中消去
+      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
+        loginChildren[0].textContent = Yourname.value;
+      }
+
+      for (i = 0; i < userAdd.length; i++) {
+        if (userAdd[i].name == Yourname.value) {
+          userAdd = userAdd.splice(i, 1);
+        }
+      }
     }
     function onClickSend2() {
       // Send message to all of the peers in the room via websocket
@@ -631,31 +584,31 @@ recognition.continuous = true;
         //   });
         //   WordCloud();
         let senddata2 = `${Yourname.value}: ${localText.value.trim()}\n`;
-        let sendDataSet2 = {name:Yourname.value,msg:senddata2,type:"send"};
+        let sendDataSet2 = { name: Yourname.value, msg: senddata2, type: "send" };
         room.send(sendDataSet2);
         // const item = document.createElement('p');
         // item.textContent = `${senddata2}\n`;
         // messages.appendChild(item);
-        if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+        if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
           // 後方一致のときの処理
           messages.textContent += `\n\n${senddata2}\n`;
-        }else{
+        } else {
           messages.textContent += `${senddata2}\n`;
         }
         localText.value = '';
 
       }
 
-          //送信したら入力中消去
-          if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-            loginChildren[0].textContent = Yourname.value;
-          }
-      
-          for(i=0;i<userAdd.length;i++){
-            if(userAdd[i].name == Yourname.value){
-              userAdd = userAdd.splice(i,1);
-            }
-          }
+      //送信したら入力中消去
+      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
+        loginChildren[0].textContent = Yourname.value;
+      }
+
+      for (i = 0; i < userAdd.length; i++) {
+        if (userAdd[i].name == Yourname.value) {
+          userAdd = userAdd.splice(i, 1);
+        }
+      }
     }
     function SpeechToText() {
       // const resultDiv = document.querySelector('#result-div');
@@ -670,12 +623,12 @@ recognition.continuous = true;
             // finalTranscript += transcript;
             let speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
             let senddata3 = `${Yourname.value}:${speechtext}\n`;
-            let sendDataSet3 = {msg:senddata3,type:"speech"};
+            let sendDataSet3 = { msg: senddata3, type: "speech" };
             room.send(sendDataSet3);
-            if(messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')){
+            if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
               // 後方一致のときの処理
               messages.textContent += `\n\n${senddata3}\n`;
-            }else{
+            } else {
               messages.textContent += `${senddata3}\n`;
             }
 
@@ -703,20 +656,20 @@ recognition.continuous = true;
       //音声入力のトグル
       let startClass = startBtn.classList;
       let stopClass = stopBtn.classList;
-     
-          // recognition.onend = function() { 
-          //   if(stopClass.contains('btn-outline-danger')){
-          //     console.log('recognition restarted!');
-          //     try {
-          //       recognition.start(); 
-          //     }
-          //     catch(error) {
-          //       console.error('音声認識は既に開始されています', error);
-          //     }
-          //   }
-          // };
-        
-        
+
+      // recognition.onend = function() { 
+      //   if(stopClass.contains('btn-outline-danger')){
+      //     console.log('recognition restarted!');
+      //     try {
+      //       recognition.start(); 
+      //     }
+      //     catch(error) {
+      //       console.error('音声認識は既に開始されています', error);
+      //     }
+      //   }
+      // };
+
+
 
       startBtn.onclick = () => {
         let sttStartMessages = document.getElementById('message2');
@@ -727,41 +680,41 @@ recognition.continuous = true;
         // catch(error) {
         //   console.error('音声認識は既に開始されています', error);
         // }
-                  
-       
-  //       if(startClass.contains('btn-outline-primary')){
-  //          startClass.remove('btn-outline-primary');
-  //          startClass.add('btn-primary');
-  //          stopClass.remove('btn-danger');
-  //          stopClass.add('btn-outline-danger');
-  //       }
-  //       // startBtn.removeClass()
+
+
+        //       if(startClass.contains('btn-outline-primary')){
+        //          startClass.remove('btn-outline-primary');
+        //          startClass.add('btn-primary');
+        //          stopClass.remove('btn-danger');
+        //          stopClass.add('btn-outline-danger');
+        //       }
+        //       // startBtn.removeClass()
       }
-    //   stopBtn.onclick = () => {
-    //     recognition.stop();
-    //     // stopTimer();
-    //     if(stopClass.contains('btn-outline-danger')){
-    //       stopClass.remove('btn-outline-danger');
-    //       stopClass.add('btn-danger');
-    //       startClass.remove('btn-primary');
-    //       startClass.add('btn-outline-primary');
-    //    }
-    //     // startClass = "btn btn-outline-primary";
-    //     // stopClass = "btn btn-danger";
-    //   }//ここまでがSpeech to text
+      //   stopBtn.onclick = () => {
+      //     recognition.stop();
+      //     // stopTimer();
+      //     if(stopClass.contains('btn-outline-danger')){
+      //       stopClass.remove('btn-outline-danger');
+      //       stopClass.add('btn-danger');
+      //       startClass.remove('btn-primary');
+      //       startClass.add('btn-outline-primary');
+      //    }
+      //     // startClass = "btn btn-outline-primary";
+      //     // stopClass = "btn btn-danger";
+      //   }//ここまでがSpeech to text
     }
 
-    
+
 
   });
 
- 
+
 
 
   peer.on('error', console.error);
 
- 
-  
+
+
 }
 )();
 
@@ -785,17 +738,17 @@ let toggleBottonClass = toggleBotton.classList;
 
 
 
-        recognition.onend = function() { 
-            if(toggleBottonClass.contains('active')){
-              console.log('recognition restarted!');
-              try {
-                recognition.start(); 
-              }
-              catch(error) {
-                console.error('音声認識は既に開始されています', error);
-              }
-            }
-          };
+recognition.onend = function () {
+  if (toggleBottonClass.contains('active')) {
+    console.log('recognition restarted!');
+    try {
+      recognition.start();
+    }
+    catch (error) {
+      console.error('音声認識は既に開始されています', error);
+    }
+  }
+};
 
 //JOINボタンをクリックする
 const ClickJoinButton = () => {
@@ -850,7 +803,7 @@ Speech.prototype.setSpeech = function () {
   msg.pitch = 1;
   msg.text = text;
   msg.lang = 'ja-JP';
-  window.speechSynthesis.speak(msg);
+  synth.speak(msg);
 };
 Speech.prototype.event = function () {
   let self = this;
@@ -860,109 +813,7 @@ Speech.prototype.event = function () {
 
 
 
-//Yahoo テキスト解析
-// const  textYahooAPI =() => {
 
-
-//     const ns = XmlService.getNamespace("urn:yahoo:jp:jlp");
-//     const result = parseText("君は君らしく生きていく自由があるんだ");
-
-//     const doc = XmlService.parse(result.getContentText());
-//     const root = doc.getRootElement();
-//     const words = root.getChild("ma_result", ns).getChild("word_list", ns).getChildren("word", ns);
-//     const surfaces = words.map(w => w.getChildText("surface", ns));
-//     const pos = words.map(w => w.getChildText("pos", ns));
-
-//     sheet.appendRow(surfaces);
-//     sheet.appendRow(pos);
-//   }
-
-// function parseText(text){
-//   const yahooUrl = "https://jlp.yahooapis.jp/MAService/V1/parse";
-//   const appid = "dj00aiZpPWlXVW9WcWs3S1FyZyZzPWNvbnN1bWVyc2VjcmV0Jng9ZGM-";
-//   const url = yahooUrl + "?appid=" + appid;
-
-//   const payload = {
-//     "sentence": text,
-//     "results": "ma,uniq"
-//   };
-
-//   const params = {
-//     "method": "post",
-//     "muteHttpExceptions": true,
-//     "payload": payload
-//   };
-
-
-
-// ここからはワードクラウド
-// let myWords =[
-//   //   // {"word":"イノシシ","size":10}
-//   //   // {"word":"おにやんま","size":6},
-//   //   // {"word":"ゆるっと","size":8},
-//   //   // {"word":"映画","size":6},
-//   //   // {"word":"ヘルシンキ","size":20},
-//   //   // {"word":"メタリカ","size":15},
-//   //   // {"word":"お面","size":10},
-//   //   // {"word":"おいしい","size":20},
-//   ];
-// let w = 1320,
-//     h = 1078,
-//     sizeScale = d3.scaleLinear().domain([0, myWords.length]).range([10, 100]),
-//     layout = d3.layout.cloud(),
-//   // svgオブジェクトの追加
-//     svg = d3.select("#cloud").append("svg")
-//       .attr("class", "ui fluid image") 
-//       .attr("viewBox", "0 0 " + w + " " + h ) 
-//         .attr("width", "100%" )
-//         .attr("height","100%")
-//         .append("g");
-
-
-
-
-//   // インスタンスの作成
-
-//     let WordCloud = (wordcloud) => {
-
-//       layout
-//       .size([w, h])
-//       .words(myWords.map( function (d) { return { text: d.word, size: sizeScale(d.size)}; }))
-//       .padding(10)        //単語の距離
-//       .rotate(function () { return (~~(Math.random() * 6) - 3)*30; })
-//       .fontSize(function (d) { return d.size; })      // フォントサイズ
-//       .on("end", draw);
-//       let wordcloud = () =>{
-//       layout.start();
-//       console.log(myWords);
-//       };
-//       setInterval(wordcloud,3000);
-
-//     // 'ayoutの出力を受け取り単語を描画
-//     function draw(words) {
-//           //  let socket;
-//           //  socket = io.connect("http://localhost:3000");
-//            svg
-//           // style using semantic ui
-//           .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")")
-
-//           .selectAll("text")
-//           .data(words)
-//           .enter().append("text")
-//           .style("font-size", function (d) { return d.size+ "px"; })
-//           .style("font-family", "Impact")
-//           .attr("fill", function(d, i) { return d3.schemeCategory10[i % 10]; } )
-//           .attr("text-anchor", "middle")
-//           .attr("transform",function(d) {
-//                       return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-//           })
-//           //  .attr("transform",function(d) {
-//           //             return "translate(" + [d.x, d.y] + ")";
-//           // })
-//           .text(function (d) { return d.text; });
-
-//     }
-//     };
 
 
 
