@@ -1,10 +1,13 @@
 # ConvivialChat:遠隔会話ツールにおけるテキストとスピーチの共生
+![ConvivialChat](public/img/ConvivialChat2.png)
 
 このシステムは、遠隔会話ツールにおいてテキストとスピーチが共生する新たなコミュニケーションのスタイルを提案します。
+
 Webアプリケーションとして実装しました。
 
 I am developing teleconversation tool where text and speech can coexist without any border.
 This is my graduation project.
+
 
 ## 使用した技術/Technologies used in this system
 - [SKyWay](https://webrtc.ecl.ntt.com/)
@@ -24,8 +27,10 @@ This is my graduation project.
 #### Text to Speechの機能
 - テキストでチャット送信された文字が機会音声で読み上げられる
   - 画像の中央下部にあるSayボタンを押すと送信したテキストを読み上げ
-    - チャットのログ上に「」で囲まれ表示
-  - 画像右下のリアクションボタンも押すと添え字が読み上げられる
+    - チャットのログ上に「」で囲まれ表
+- 送信されたリアクションスタンプに応じた音声が読み上げられる
+  - 画像右下のリアクションボタンも押すと添え字が読み上げられる　　 
+    - 絵文字は横に並んで表示される。  
   
 
 #### Speech to Textの機能
