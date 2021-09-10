@@ -12,7 +12,6 @@ This is my graduation project.
 
 
 ## 概要/Outline
-![image](https://user-images.githubusercontent.com/57240543/132833383-58544033-4891-42b5-8bc7-f3fb047c7b05.png)
 ![image](https://user-images.githubusercontent.com/57240543/132832314-2c7d7f54-dbf4-447b-9cca-b50fcb96c278.png)
 
 ### 遠隔会話ツールとしての基本機能
