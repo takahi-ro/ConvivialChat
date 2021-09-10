@@ -8,7 +8,7 @@
   },
   "author": "takahiro",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "d3": "^6.3.1",
