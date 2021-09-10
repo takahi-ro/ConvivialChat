@@ -14,15 +14,7 @@
             <button id="js-join-trigger" class="btn btn-outline-primary">Join</button>
             <input type="text" id="namae" value="<%= value2 %>">
           </div>
-      
-          <!--      <div>
-                      <p style = "display:inline-block;">Video:</p>
-                      <div class="toggle-btn " id = "onoff">
-                        <input type="checkbox"  checked class="cb-value" />
-                        <span class="round-btn"></span>
-                      </div>
-                    </div> -->
-      
+    
             <div id="LoginUsersBox" style = "height:70%; background-color:#b4deff;">
               <p style="text-align: center; width: 90%; background-color:#fff;margin:0 auto;margin-top:15px; margin-bottom:15px;line-height:48px;">ログインしたユーザー</p>
               <ul id="loginUsers" ></ul>
@@ -56,11 +48,7 @@
               style = 'width:45%;' >Say</button>
               <button id="js-send-trigger2" class="btn btn-primary"  style = 'width:45%;'>Send</button>
             </div>
-          </form>
-      
-          <!-- この下がワードクラウドのオンオフ -->
-      
-      
+          </form>    
         </div>
       
         <div style = "text-align: center; position:relative; user-select: none;">
@@ -126,11 +114,6 @@
       
       
       
-      <!-- ここからはspeech to text -->
-      
-      
-      
-      
       
       
       
@@ -140,7 +123,7 @@
       
       
       <script>
-        // チャットのスクロールを一番したから開始するだ
+        // チャットのスクロールを一番したから開始する
         window.onload = function () {
           var form = document.getElementById('form');
           var messages = document.getElementById('js-messages');
@@ -164,7 +147,6 @@
       
       
       </script>
-      <script src="https://d3js.org/d3.v5.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
       <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
       crossorigin="anonymous"></script>
