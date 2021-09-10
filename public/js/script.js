@@ -15,27 +15,6 @@ let synth = window.speechSynthesis;
 
 
 
-
-//会話はじめるかどうか聞く。
-// if(window.location.href == "http://localhost:3000/home"){
-//   let StartConv = confirm("会話を始めますか？");
-//   if(!StartConv){
-//     window.location.href = "http://localhost:3000/";
-//   }else{
-
-//音声認識が使用可能ということを示すふりをしているコード。いらないかもしれない
-setTimeout(() => {
-
-  startBtn.click();
-
-}, 4000);
-
-
-//   }
-// }
-
-
-
 (async function main() {
   // const localVideo = document.getElementById('js-local-stream');
   const joinTrigger = document.getElementById('js-join-trigger');
@@ -92,24 +71,12 @@ setTimeout(() => {
     })
     .catch(console.error);
 
-  // Render local stream
-  // localVideo.muted = true;
-  // localVideo.srcObject = localStream;
-  // localVideo.playsInline = true;
-  // await localVideo.play().catch(console.error);
 
 
   //ストリームのオンオフ
   const onoffSwitch = () => {
-    // let OnOff = document.getElementById("onoff");
-    // let onoff = OnOff.className;
     let OnOff2 = document.getElementById("onoff2");
     let onoff2 = OnOff2.className;
-    // if (onoff == "toggle-btn active") {
-    //   // localStream.getVideoTracks().forEach((track) => (track.enabled = true));
-    // } else {
-    //   // localStream.getVideoTracks().forEach((track) => (track.enabled = false));
-    // }
     if (onoff2 == "toggle-btn active") {
       localStream.getAudioTracks().forEach((track) => (track.enabled = true));
     } else {
@@ -172,8 +139,6 @@ setTimeout(() => {
       item.id = peerId;
       loginUsers.appendChild(item);
 
-      // messages.textContent += `=== ${peerId} joined ===\n`;
-
       let yourdata = { name: Yourname.value, type: "login", peerId: MypeerId };
       room.send(yourdata);
 
@@ -186,7 +151,7 @@ setTimeout(() => {
 
 
 
-    // Render remote stream for new peer join in the room この下が相手に送るデータを定めているはずだからここを直せば名前の件は解決するはず。
+    // Render remote stream for new peer join in the room
     room.on('stream', async stream => {
       const newVideo = document.createElement('video');
       newVideo.srcObject = stream;
@@ -482,13 +447,6 @@ setTimeout(() => {
 
     // for closing room members
     room.on('peerLeave', peerId => {
-      // const remoteVideo = remoteVideos.querySelector(
-      //   `[data-peer-id="${peerId}"]`
-      // );
-      // remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-      // remoteVideo.srcObject = null;
-      // remoteVideo.remove();
-      // messages.textContent += `=== ${peerId} left ===\n`;
       for (i = 0; i < loginChildren.length; i++) {
         if (loginChildren[i].id == peerId) {
           if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
@@ -545,11 +503,6 @@ setTimeout(() => {
       if (localText.value == '') {
         console.log("text value is null");
       } else {
-        //ワードクラウド（以下4行）
-        // targettext = myWords.push({
-        //   word: localText.value,size: Math.floor((Math.random()+0.1)*30)  
-        //   });
-        //   WordCloud();
         let saytext = `「${localText.value.trim()}」`;
         let senddata1 = `${Yourname.value}: ${saytext}\n`;
         let sendDataSet1 = { name: Yourname.value, msg: senddata1, type: "say" };
@@ -611,16 +564,12 @@ setTimeout(() => {
       }
     }
     function SpeechToText() {
-      // const resultDiv = document.querySelector('#result-div');
-
-      // let finalTranscript = ''; // 確定した(黒の)認識結果
 
       recognition.onresult = (event) => {
         let interimTranscript = ''; // 暫定(灰色)の認識結果
         for (let i = event.resultIndex; i < event.results.length; i++) {
           let transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
-            // finalTranscript += transcript;
             let speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
             let senddata3 = `${Yourname.value}:${speechtext}\n`;
             let sendDataSet3 = { msg: senddata3, type: "speech" };
@@ -637,19 +586,10 @@ setTimeout(() => {
               messages.scrollTop = messages.scrollHeight;
             };
             scrollToBottom();
-
-            //ワードクラウド
-            // targettext = myWords.push({
-            // word: event.results[event.results.length-1][0].transcript,size: Math.floor((Math.random()+0.1)*30)  
-            // });
-            // WordCloud();
-
-
           } else {
             interimTranscript = transcript;
           }
         }
-        // resultDiv.innerHTML = finalTranscript + '<i style="color:#ddd;">' + interimTranscript + '</i>';
       }
 
 
@@ -657,54 +597,13 @@ setTimeout(() => {
       let startClass = startBtn.classList;
       let stopClass = stopBtn.classList;
 
-      // recognition.onend = function() { 
-      //   if(stopClass.contains('btn-outline-danger')){
-      //     console.log('recognition restarted!');
-      //     try {
-      //       recognition.start(); 
-      //     }
-      //     catch(error) {
-      //       console.error('音声認識は既に開始されています', error);
-      //     }
-      //   }
-      // };
-
-
 
       startBtn.onclick = () => {
         let sttStartMessages = document.getElementById('message2');
         sttStartMessages.textContent = "Speech recogniton is supported!"
-        // try {
-        //   recognition.start(); 
-        // }
-        // catch(error) {
-        //   console.error('音声認識は既に開始されています', error);
-        // }
-
-
-        //       if(startClass.contains('btn-outline-primary')){
-        //          startClass.remove('btn-outline-primary');
-        //          startClass.add('btn-primary');
-        //          stopClass.remove('btn-danger');
-        //          stopClass.add('btn-outline-danger');
-        //       }
-        //       // startBtn.removeClass()
       }
-      //   stopBtn.onclick = () => {
-      //     recognition.stop();
-      //     // stopTimer();
-      //     if(stopClass.contains('btn-outline-danger')){
-      //       stopClass.remove('btn-outline-danger');
-      //       stopClass.add('btn-danger');
-      //       startClass.remove('btn-primary');
-      //       startClass.add('btn-outline-primary');
-      //    }
-      //     // startClass = "btn btn-outline-primary";
-      //     // stopClass = "btn btn-danger";
-      //   }//ここまでがSpeech to text
+      
     }
-
-
 
   });
 
@@ -782,7 +681,7 @@ function Speech() {
 Speech.prototype.init = function () {
   let self = this;
   if ('speechSynthesis' in window) {
-    self.message.textContent = self.support;
+    console.log(self.support);
   } else {
     self.message.textContent = self.unsupported
     self.text.setAttribute('disabled', 'disabled');
