@@ -10,7 +10,7 @@ This is my graduation project.
 
 
 ## 使用した技術/Technologies used in this system
-- [SKyWay](https://webrtc.ecl.ntt.com/)
+- [SkyWay](https://webrtc.ecl.ntt.com/)
 - [Web Speech API](https://wicg.github.io/speech-api/)
 
 
