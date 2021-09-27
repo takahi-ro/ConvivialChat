@@ -1,7 +1,7 @@
 {
   "name": "skyway",
   "version": "1.0.0",
-  "description": "my graduate work of Kobe Uni",
+  "description": "my graduation work of Kobe Uni",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,8 +11,8 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "d3": "^6.3.1",
-    "d3-cloud": "^1.2.5",
+    //"d3": "^6.3.1",
+    //"d3-cloud": "^1.2.5",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.0",
@@ -21,9 +21,5 @@
     "mongoose": "^5.11.10",
     "mpath": ">=0.8.4"
   },
-  "devDependencies": {},
-  "engines": {
-    "node": "7.0.0",
-    "npm": "3.10.8"
-  }
+  "devDependencies": {}
 }
