@@ -127,8 +127,6 @@ let synth = window.speechSynthesis;
             items[i] = document.createElement('li');
             items[i].id = peers[i];
             loginUsers.appendChild(items[i]);
-            console.log(peers);
-            console.log(MypeerId);
           }
         }
 
