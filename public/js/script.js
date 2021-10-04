@@ -122,10 +122,14 @@ let synth = window.speechSynthesis;
       //接続したときに、すでに以前からログインずみの人達を表示する
       peer.listAllPeers((peers) => {
         let items = [];
-        for (i = 0; i < peers.length - 1; i++) {
-          items[i] = document.createElement('li');
-          items[i].id = peers[i];
-          loginUsers.appendChild(items[i]);
+          for (i = 0; i < peers.length; i++) {
+          if (peers[i] !== MypeerId){
+            items[i] = document.createElement('li');
+            items[i].id = peers[i];
+            loginUsers.appendChild(items[i]);
+            console.log(peers);
+            console.log(MypeerId);
+          }
         }
 
       });
