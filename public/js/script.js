@@ -1,4 +1,3 @@
-
 const Peer = window.Peer;
 const startBtn = document.querySelector('#start-btn');
 const stopBtn = document.querySelector('#stop-btn');
@@ -10,9 +9,6 @@ recognition.interimResults = true;
 recognition.continuous = true;
 //Text to Speech の準備
 let synth = window.speechSynthesis;
-
-
-
 
 
 (async function main() {
@@ -30,7 +26,6 @@ let synth = window.speechSynthesis;
   const sdkSrc = document.querySelector('script[src*=skyway]');
   const Yourname = document.getElementById('namae');
   let form = document.getElementById('form');
-  let targettext;
   let loginUsers = document.getElementById('loginUsers');
   let loginChildren = loginUsers.children;
   let userAdd = [];
@@ -53,25 +48,13 @@ let synth = window.speechSynthesis;
   let scrollToBottom = () => {
     messages.scrollTop = messages.scrollHeight;
   };
-
-
-
-
-
-
-
-
-
-
-
+  
   let localStream = await navigator.mediaDevices
     .getUserMedia({
       audio: true
       // video: true
     })
     .catch(console.error);
-
-
 
   //ストリームのオンオフ
   const onoffSwitch = () => {
@@ -176,6 +159,8 @@ let synth = window.speechSynthesis;
       }
       let msg = new SpeechSynthesisUtterance();
       let text = sayText;
+      let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+      msg.voice = Voices[0];
       msg.text = text;
       msg.volume = volume;
       msg.rate = rate;
@@ -209,6 +194,8 @@ let synth = window.speechSynthesis;
           break;
         case 'say':
           let msg = new SpeechSynthesisUtterance();
+          let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+          msg.voice = Voices[0];
           let text = data.msg;
           msg.text = text;
           synth.speak(msg);
@@ -699,6 +686,8 @@ Speech.prototype.getTextValue = function () {
 Speech.prototype.setSpeech = function () {
   let msg = new SpeechSynthesisUtterance();
   let text = this.getTextValue();
+  let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+  msg.voice = Voices[0];
   msg.volume = 1;
   msg.rate = 1;
   msg.pitch = 1;
