@@ -699,19 +699,3 @@ Speech.prototype.event = function () {
   let self = this;
   self.btn.addEventListener('click', function () { self.setSpeech(); }, null);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
