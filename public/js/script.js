@@ -656,10 +656,10 @@ Speech.prototype.init = function () {
   }
   self.event();
 };
+
 Speech.prototype.getTextValue = function () {
   return this.textValue = this.text.value;
 };
-
 
 Speech.prototype.setSpeech = function () {
   let msg = new SpeechSynthesisUtterance();
@@ -673,6 +673,7 @@ Speech.prototype.setSpeech = function () {
   msg.lang = 'ja-JP';
   synth.speak(msg);
 };
+
 Speech.prototype.event = function () {
   let self = this;
   self.btn.addEventListener('click', function () { self.setSpeech(); }, null);
