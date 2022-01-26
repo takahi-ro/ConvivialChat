@@ -460,11 +460,6 @@ let synth = window.speechSynthesis;
     room.once('close', () => {
       sendTrigger.removeEventListener('click', onClickSend);
       messages.textContent += '== あなたが退出しました ===\n';
-      // Array.from(remoteVideos.children).forEach(remoteVideo => {
-      //   remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-      //   remoteVideo.srcObject = null;
-      //   remoteVideo.remove();
-      // });
     });
 
     //退出の際の処理
@@ -520,17 +515,10 @@ let synth = window.speechSynthesis;
       if (localText.value == '') {
         console.log("text value is null");
       } else {
-        //ワードクラウド（以下4行）
-        // targettext = myWords.push({
-        //   word: localText.value,size: Math.floor((Math.random()+0.1)*30)  
-        //   });
-        //   WordCloud();
         let senddata2 = `${Yourname.value}: ${localText.value.trim()}\n`;
         let sendDataSet2 = { name: Yourname.value, msg: senddata2, type: "send" };
         room.send(sendDataSet2);
-        // const item = document.createElement('p');
-        // item.textContent = `${senddata2}\n`;
-        // messages.appendChild(item);
+        
         if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
           // 後方一致のときの処理
           messages.textContent += `\n\n${senddata2}\n`;
@@ -596,13 +584,8 @@ let synth = window.speechSynthesis;
 
   });
 
-
-
-
   peer.on('error', console.error);
-
-
-
+  
 }
 )();
 
@@ -613,7 +596,6 @@ $('.cb-value').click(function () {
   if ($(mainParent).find('input.cb-value').is(':checked')) {
     $(mainParent).addClass('active');
     recognition.start();
-
   } else {
     $(mainParent).removeClass('active');
     recognition.stop();
@@ -622,9 +604,6 @@ $('.cb-value').click(function () {
 
 let toggleBotton = document.getElementById('onoff2');
 let toggleBottonClass = toggleBotton.classList;
-
-
-
 
 recognition.onend = function () {
   if (toggleBottonClass.contains('active')) {
@@ -646,7 +625,6 @@ const ClickJoinButton = () => {
 };
 
 setTimeout(ClickJoinButton, 3000)
-
 
 //以下はテキストtoスピーチ
 window.addEventListener('DOMContentLoaded', function () {
