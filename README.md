@@ -1,11 +1,11 @@
-# ConvivialChat:遠隔会話ツールにおけるテキストとスピーチの共生
+# ConvivialChat:A Remote Conversation Tool Designed for Text-Speech Symbiosis
 ![ConvivialChat](public/img/ConvivialChat2.png)
 
 このシステムは、遠隔会話ツールにおいてテキストとスピーチが共生する新たなコミュニケーションのスタイルを提案します。
 
 Webアプリケーションとして実装しました。
 
-I am developing teleconversation tool where text and speech can coexist without any border.
+I am developing remote conversation tool where text and speech can coexist without any border.
 This is my graduation project.
 
 
