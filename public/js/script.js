@@ -543,9 +543,7 @@ let synth = window.speechSynthesis;
     function SpeechToText() {
 
       recognition.onresult = (event) => {
-        let interimTranscript = ''; // 暫定(灰色)の認識結果
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          let transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             let speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
             let senddata3 = `${Yourname.value}:${speechtext}\n`;
@@ -563,9 +561,7 @@ let synth = window.speechSynthesis;
               messages.scrollTop = messages.scrollHeight;
             };
             scrollToBottom();
-          } else {
-            interimTranscript = transcript;
-          }
+          } 
         }
       }
 
