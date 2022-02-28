@@ -37,4 +37,9 @@ This is my graduation project.
   - マイクをオンにして発言した内容が音声認識され、チャットのログに表示される
     - チャットのログ上に『』で囲まれ表示
 
-
+## ローカル環境で動かす手順
+1．git cloneする
+2．./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
+3．npm installする
+4．node mainによりローカルで起動
+5．localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
