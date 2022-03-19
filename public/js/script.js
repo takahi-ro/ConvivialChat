@@ -187,9 +187,7 @@ let synth = window.speechSynthesis;
                 }
               }
             };
-
             createUsers();
-
           });
           break;
         case 'say':
@@ -312,7 +310,6 @@ let synth = window.speechSynthesis;
         case 'hahaha':
           receiveReaction('🤣','ゎはっはっ',1,1,2);
           break;
-
       }
     });
 
