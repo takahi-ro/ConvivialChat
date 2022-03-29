@@ -38,17 +38,17 @@ This is my graduation project.
     - チャットのログ上に『』で囲まれ表示
 
 ## ローカル環境で動かす手順
--  git cloneする
+1.  git cloneする
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
 ```
--  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
--  npm installする
+2.  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
+3.  npm installする
 ```sh 
 npm install 
 ```
--  node mainによりローカルで起動
+4.  node mainによりローカルで起動
 ```sh 
 node main 
 ```
--  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
+5.  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
