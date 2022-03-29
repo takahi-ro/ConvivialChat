@@ -39,10 +39,11 @@ This is my graduation project.
 
 ## ローカル環境で動かす手順
 -  git cloneする
-``` git clone https://github.com/takahi-ro/ConvivialChat_Public.git ```
+```sh git clone https://github.com/takahi-ro/ConvivialChat_Public.git ```
 
 -  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
 -  npm installする
-``` npm install ```
+```sh npm install ```
 -  node mainによりローカルで起動
+```sh node main ```
 -  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
