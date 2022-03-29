@@ -39,6 +39,7 @@ This is my graduation project.
 
 ## ローカル環境で動かす手順
 -  git cloneする
+```sh git clone https://github.com/takahi-ro/ConvivialChat_Public.git
 -  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
 -  npm installする
 -  node mainによりローカルで起動
