@@ -43,8 +43,9 @@ This is my graduation project.
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
 ```
 2.  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
-3.  npm installする
-```sh 
+3.  cloneしたディレクトリに移動してnpm installする
+```sh
+cd ConvivialChat_Public
 npm install 
 ```
 4.  node mainによりローカルで起動
