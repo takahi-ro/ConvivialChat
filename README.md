@@ -5,7 +5,7 @@
 
 Webアプリケーションとして実装しました。
 
-I am developing remote conversation tool where text and speech can coexist without any border.
+I am developing remote conversation tool where text and speech can coexist without any border. ConvivialChat would provide a way for mixing of participants to have equal and complementary discussions with each other who speak in voice as the main way of communicating and those who prefer to use only text chat.
 This is my graduation project.
 
 
