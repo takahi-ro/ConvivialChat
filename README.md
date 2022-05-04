@@ -42,7 +42,7 @@ This is my graduation project.
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
 ```
-2.  ./public/js/key.js のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
+2.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIKeyをSkyWayに登録して取得した自分のものに書き換える
 3.  cloneしたディレクトリに移動してnpm installする
 ```sh
 cd ConvivialChat_Public
