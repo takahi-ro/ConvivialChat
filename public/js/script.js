@@ -124,7 +124,7 @@ let synth = window.speechSynthesis;
       item.id = peerId;
       loginUsers.appendChild(item);
 
-      let yourdata = { name: Yourname.value, type: "login", peerId: MypeerId };
+      let yourdata = { name: Yourname.value, type: "login"};
       room.send(yourdata);
 
       //チャット下までスクロール
@@ -182,7 +182,7 @@ let synth = window.speechSynthesis;
                 setTimeout(createUsers, 1000);
               }
               for (i = 0; i < loginChildren.length; i++) {
-                if (loginChildren[i].id == data.peerId) {
+                if (loginChildren[i].id == src) {
                   loginChildren[i].textContent = data.name;
                 }
               }
@@ -267,7 +267,7 @@ let synth = window.speechSynthesis;
           break;
         case 'typing':
           for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].id == data.peerId && loginChildren[i].textContent == data.name) {
+            if (loginChildren[i].id == src && loginChildren[i].textContent == data.name) {
               loginChildren[i].textContent += "が入力中....";
             }
           }
@@ -276,7 +276,7 @@ let synth = window.speechSynthesis;
             userAdd.push(data);
           }
           for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].peerId == data.peerId) {
+            if (userAdd[i].peerId == src) {
               userAdd.splice(i, 1, data);
             }
           }
@@ -318,8 +318,8 @@ let synth = window.speechSynthesis;
     //リアクションボタンを送る
     function SendReaction(content,type,sayText,volume,rate,pitch){
       messages.textContent += content;
-      let GoodSendData = { type: type, name: Yourname.value, peerId: MypeerId };
-      room.send(GoodSendData);
+      let ReactionSendData = { type: type, name: Yourname.value};
+      room.send(ReactionSendData);
       if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
         if (synth.speaking) {
           console.error('speechSynthesis.speaking');
@@ -422,7 +422,7 @@ let synth = window.speechSynthesis;
     //テキストエリアの外を選択したら入力中が消えるようにする
     localText.addEventListener('blur', (e) => {
       e.preventDefault();
-      let BlurSendData = { type: 'Blur', name: Yourname.value, peerId: MypeerId };
+      let BlurSendData = { type: 'Blur', name: Yourname.value};
       room.send(BlurSendData);
       if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
         loginChildren[0].textContent = Yourname.value;
