@@ -1,0 +1,156 @@
+<!-- <h1 class="heading" style="border-bottom: 1px solid #000;">Room example</h1> -->
+
+
+
+<!-- <div class="remote-streams" id="js-remote-streams">
+        <video id="js-local-stream"></video>
+      </div> -->
+
+      <div class="room">
+        <div style = 'user-select: none;'>
+          <div class="disable">
+            <span id="js-room-mode"></span>:
+            <input type="text" placeholder="Room Name" id="js-room-id" value="<%= value1 %>">
+            <button id="js-join-trigger" class="btn btn-outline-primary">Join</button>
+            <input type="text" id="namae" value="<%= value2 %>">
+          </div>
+    
+            <div id="LoginUsersBox" style = "height:70%; background-color:#b4deff;">
+              <p style="text-align: center; width: 90%; background-color:#fff;margin:0 auto;margin-top:15px; margin-bottom:15px;line-height:48px;">ログインしたユーザー</p>
+              <ul id="loginUsers" ></ul>
+      
+              <p class="meta" id="js-meta" style="display:none;"></p>
+            </div>
+            
+            <div  style = "text-align: center; margin-top: 25px; display:none;">
+              <p style ="margin-bottom:5px;user-select: none;">音声入力</p>
+                <button id="start-btn" class="btn btn-primary" style="margin-right: 2%;width: 29%;">start</button>
+                <button id="stop-btn" class="btn btn-outline-danger" style= " width: 29%;">stop</button> 
+              <div id="result-div"></div>
+            </div>
+      
+          <!-- <button onclick="location.href='<%= `/` %>'" id="js-leave-trigger" class = "btn btn-danger" style ="margin-top:120px;display:block;">Leave</button> -->
+          <button  id="js-leave-trigger" class="btn btn-danger"
+            style="margin:0 auto;margin-top:25%;display:block;width:60%;">Leave</button>
+      
+        </div>
+      
+        <div id="cloud" style ="background-color:#a1d6ff;" >
+          <pre class="messages" id="js-messages"  ></pre>
+      
+          <!-- 送信ボックス -->
+          <form id="form" action="" method="get" accept-charset="utf-8">
+            <!-- <textarea  rows="2" cols="40" type="text" id="js-local-text" style="display:block;margin-bottom:15px;" placeholder = "テキストを入力"></textarea> -->
+            <textarea rows="2" type="text" id="js-local-text" style="display:block; width: 94%;margin:0 auto; margin-top:10px;user-select: none;"
+              placeholder="テキストを入力"></textarea>
+            <div style="margin-left:60%; ; margin-top:10px;">
+              <button id="js-send-trigger" class="btn btn-primary"
+              style = 'width:45%;' >Say</button>
+              <button id="js-send-trigger2" class="btn btn-primary"  style = 'width:45%;'>Send</button>
+            </div>
+          </form>    
+        </div>
+      
+        <div style = "text-align: center; position:relative; user-select: none;">
+          <img src="img/ConvivialChat2.png" style = "width:270px;height:270px; margin-top:15px; user-select: none;"  draggable="false" alt="コンヴィヴィアルチャットロゴ">
+          <p id="message2" style = "margin-bottom:5px; "></p>
+          <p id="message" style = "margin-bottom:50px;"></p>
+          <div style = "position: absolute; top:55%;left:37%;">
+            <i class="fa-solid fa-microphone fa-3x"style = '
+              margin-right:-7px;
+              font-family: "Font Awesome 5 Free";
+              font-style:normal;
+              font-weight: 900;
+              content: "\f130";'></i>
+            <div class="toggle-btn " id="onoff2" style='display:inline-block'>
+              <input type="checkbox" checked class="cb-value" />
+              <span class="round-btn"></span>
+            </div>
+          </div>
+      
+      
+      
+             
+          <div style="background-color:#b4deff;height:200px;position:absolute; bottom:0; width:100%;">
+            <p style="text-align: center; width: 92%; background-color:#fff;margin:0 auto;line-height:48px;margin-top:15px;">リアクションボタン</p>
+            <div style=" margin:0 auto;margin-top:15px; width:92%; height:55%; background-color: #fff; position:relative;">
+             
+              <div  style ="width:15%; height:50%;position:absolute; left:4.5%; top:20%" >
+                <button id = 'good' style = "width:100%; height:100%;">👍</button>
+                <p style = "margin:0; height:20%; width:100%;">いいね</p>
+              </div>
+              
+              <div  style ="width:15%; height:50%;position:absolute; left:23.5%; top:20%">
+                <button id = 'heee' style = "width:100%; height:100%;">😦</button>
+                <p style = "margin:0;height:20%; width:100%;">へぇー</p>
+              </div>
+      
+              <div  style ="width:15%; height:50%;position:absolute; left:42.5%; top:20%">
+                <button id = 'uun' style = "width:100%; height:100%;">🤔</button>
+                <p style = "margin:0;height:20%; width:100%;">うーん</p>
+              </div>
+      
+              <div  style ="width:15%; height:50%;position:absolute; left:61.5%; top:20%">
+                <button id = 'ooo' style = "width:100%; height:100%;">😮</button>
+                <p style = "margin:0;height:20%; width:100%;">おおー</p>
+              </div>
+              <div  style ="width:15%; height:50%;position:absolute; left:80.5%; top:20%">
+                <button id = 'hahaha' style = "width:100%; height:100%;">🤣</button>
+                <p style = "margin:0;height:20%; width:100%;">わはは</p>
+              </div>
+             
+              
+            </div>
+       
+          </div> 
+            </div>
+          </div>
+          
+         
+        </div>
+       
+      
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <script>
+        // チャットのスクロールを一番したから開始する
+        window.onload = function () {
+          var form = document.getElementById('form');
+          var messages = document.getElementById('js-messages');
+      
+          var scrollToBottom = () => {
+            messages.scrollTop = messages.scrollHeight;
+          };
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // 一番下までスクロールする
+      
+            scrollToBottom();
+      
+          });
+        };
+      
+      
+       
+      
+      
+      
+      </script>
+      <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
+      <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"
+        integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig=="
+        crossorigin="anonymous"></script>
+      
