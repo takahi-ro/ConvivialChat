@@ -1,24 +1,22 @@
 "use strict";
 
 const express = require("express"),
-  app = express(),
-  homeController = require("./controllers/homeController"),
-  errorController = require("./controllers/errorController"),
-  layouts = require("express-ejs-layouts"),
-  mongoose = require("mongoose"),
-  Participant = require("./models/participant");
+app = express(),
+homeController = require("./controllers/homeController"),
+errorController = require("./controllers/errorController"),
+layouts = require("express-ejs-layouts"),
+mongoose = require("mongoose"),
 
-  mongoose.Promise = global.Promise;
-  
+mongoose.Promise = global.Promise;
 
-  mongoose.connect(
+mongoose.connect(
     process.env.MONGODB_URI || "mongodb://localhost:27017/skyway_db",
     {useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify:false,useCreateIndex:true}
   );
   
-  const db = mongoose.connection;
+const db = mongoose.connection;
 
-  db.once("open",() => {
+db.once("open",() => {
     console.log("Successfully connected to MongoDB useing Mongoose!");
   });
 
@@ -50,5 +48,3 @@ app.use(errorController.internalServerError);
 app.listen(app.get("port"), () => {
     console.log(`Server running at http://localhost:${app.get("port")}`);
   });
-
-
