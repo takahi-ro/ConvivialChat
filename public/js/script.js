@@ -631,8 +631,8 @@ function Speech() {
   this.message = document.getElementById('message');
   this.text = document.getElementById("js-local-text");
   this.btn = document.getElementById("js-send-trigger");
-  // this.support = 'Speech Synthesis is supported!';
-  // this.unsupported = 'Speech Synthesis is unsupported!';
+  this.support = 'Speech Synthesis is supported!';
+  this.unsupported = 'Speech Synthesis is unsupported!';
 }
 
 Speech.prototype.init = function () {
