@@ -6,7 +6,7 @@ homeController = require("./controllers/homeController"),
 errorController = require("./controllers/errorController"),
 layouts = require("express-ejs-layouts"),
 mongoose = require("mongoose"),
-
+Participant = require("./models/participant");
 mongoose.Promise = global.Promise;
 
 mongoose.connect(

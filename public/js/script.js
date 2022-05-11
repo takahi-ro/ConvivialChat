@@ -456,6 +456,13 @@ let synth = window.speechSynthesis;
     // for closing myself
     room.once('close', () => {
       sendTrigger.removeEventListener('click', onClickSend);
+      sendTrigger2.removeEventListener('click', onClickSend2);
+      good.removeEventListener('click', SendReaction);
+      heee.removeEventListener('click', SendReaction);
+      uun.removeEventListener('click', SendReaction);
+      ooo.removeEventListener('click', SendReaction);
+      hahaha.removeEventListener('click', SendReaction);
+
       messages.textContent += '== あなたが退出しました ===\n';
     });
 
@@ -487,7 +494,7 @@ let synth = window.speechSynthesis;
         let saytext = `「${localText.value.trim()}」`;
         let senddata1 = `${Yourname.value}: ${saytext}\n`;
         let sendDataSet1 = { name: Yourname.value, msg: senddata1, type: "say" };
-        room.send(sendDataSet1);
+        room.send(sendDataSet1);//自分の端末で読み上げる機能自体は一番下にある関数群が行っていて、ここでは接続しているPeerたちにデータの送信だけしてます。わかりにくいですが。
         if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
           // 後方一致のときの処理
           messages.textContent += `\n\n${senddata1}\n`;
@@ -523,14 +530,11 @@ let synth = window.speechSynthesis;
           messages.textContent += `${senddata2}\n`;
         }
         localText.value = '';
-
       }
-
       //送信したら入力中消去
       if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
         loginChildren[0].textContent = Yourname.value;
       }
-
       for (i = 0; i < userAdd.length; i++) {
         if (userAdd[i].name == Yourname.value) {
           userAdd = userAdd.splice(i, 1);
@@ -538,7 +542,6 @@ let synth = window.speechSynthesis;
       }
     }
     function SpeechToText() {
-
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
@@ -561,12 +564,6 @@ let synth = window.speechSynthesis;
           } 
         }
       }
-
-
-      //音声入力のトグル
-      let startClass = startBtn.classList;
-      let stopClass = stopBtn.classList;
-
 
       startBtn.onclick = () => {
         let sttStartMessages = document.getElementById('message2');
@@ -619,7 +616,7 @@ const ClickJoinButton = () => {
 
 setTimeout(ClickJoinButton, 3000)
 
-//以下はテキストtoスピーチ
+//以下はテキストtoスピーチ,自分の端末で読み上げ
 window.addEventListener('DOMContentLoaded', function () {
   let speech = new Speech();
   speech.init();
@@ -634,8 +631,8 @@ function Speech() {
   this.message = document.getElementById('message');
   this.text = document.getElementById("js-local-text");
   this.btn = document.getElementById("js-send-trigger");
-  this.support = 'Speech Synthesis is supported!';
-  this.unsupported = 'Speech Synthesis is unsupported!';
+  // this.support = 'Speech Synthesis is supported!';
+  // this.unsupported = 'Speech Synthesis is unsupported!';
 }
 
 Speech.prototype.init = function () {
