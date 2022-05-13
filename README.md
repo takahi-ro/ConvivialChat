@@ -42,7 +42,7 @@ This is my graduation project.
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
 ```
-2.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIkeyを[SkyWay](https://webrtc.ecl.ntt.com/)に登録して取得した自分のものに書き換える(SkyWayに登録後、新しくアプリケーションを作成するとAPIkeyが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
+2.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIkeyを自分のものに書き換える([SkyWay](https://webrtc.ecl.ntt.com/)に登録後、新しくアプリケーションを作成するとAPIkeyが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
 3.  cloneしたディレクトリに移動してnpm installする
 ```sh
 cd ConvivialChat_Public
