@@ -21,7 +21,7 @@ This is my graduation project.
 - SkyWayのSDKを用いて実装したWeb上での音声通話機能
   - 画像右側中央のマイクのトグルボタンの切り替えで音声のオンオフ
 - Socket.ioを用いたチャット機能
-  - 画像の中央下部にあるSendボタンを押すと通常ののチャット送信が可能
+  - 画像の中央下部にあるSendボタンを押すと通常のチャット送信が可能
 
 ### テキストとスピーチの共生（Text-Speech Symbiosis）を実現するための機能
 #### TTS機能（Sayボタン）
