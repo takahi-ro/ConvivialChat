@@ -21,7 +21,7 @@ This is my graduation project.
 - SkyWayのSDKを用いて実装したWeb上での音声通話機能
   - 画像右側中央のマイクのトグルボタンの切り替えで音声のオンオフ
 - Socket.ioを用いたチャット機能
-  - 画像の中央下部にあるSendボタンを押すと通常ののチャット送信が可能
+  - 画像の中央下部にあるSendボタンを押すと通常のチャット送信が可能
 
 ### テキストとスピーチの共生（Text-Speech Symbiosis）を実現するための機能
 #### TTS機能（Sayボタン）
@@ -42,14 +42,15 @@ This is my graduation project.
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
 ```
-2.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIeyを[SkyWay](https://webrtc.ecl.ntt.com/)に登録して取得した自分のものに書き換える
-3.  cloneしたディレクトリに移動してnpm installする
+2.  cloneしたディレクトリに移動してnpm installする
 ```sh
 cd ConvivialChat_Public
 npm install 
 ```
-4.  node mainによりローカルで起動
+3.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIキーを自分のものに書き換える([SkyWay](https://webrtc.ecl.ntt.com/)に登録後、新しくアプリケーションを作成するとAPIキーが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
+4.  [./main.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/main.js)のデータベースへの接続先URLを自分のものに書き換える（MongoDBをインストールしてローカルホストのデータベースを使用するか、クラウドのサービスであるMongoDB Atlasを使用（詳細は割愛））
+5.  node mainによりローカルで起動
 ```sh 
 node main 
 ```
-5.  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
+6.  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
