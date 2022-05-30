@@ -75,6 +75,7 @@ video {
   padding: 0.5rem 1rem; 
   overflow-x: visible;
   white-space: pre-wrap;
+  word-break: break-all;
 
 }
 
