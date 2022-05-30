@@ -56,7 +56,7 @@ let synth = window.speechSynthesis;
     })
     .catch(console.error);
 
-  //ストリームのオンオフ
+  //マイクのオンオフ
   const onoffSwitch = () => {
     let OnOff2 = document.getElementById("onoff2");
     let onoff2 = OnOff2.className;
@@ -66,7 +66,8 @@ let synth = window.speechSynthesis;
       localStream.getAudioTracks().forEach((track) => (track.enabled = false));
     }
   }
-  setInterval(onoffSwitch, 1000);
+
+  onoffSwitch();
 
 
   // eslint-disable-next-line require-atomic-updates
