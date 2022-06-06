@@ -581,17 +581,17 @@ let synth = window.speechSynthesis;
 )();
 
 
-// ここから下はオンオフボタンのトグル
-$('.cb-value').click(function () {
-  let mainParent = $(this).parent('.toggle-btn');
-  if ($(mainParent).find('input.cb-value').is(':checked')) {
-    $(mainParent).addClass('active');
+const onoff2cb = document.getElementById('onoff2-cb');
+onoff2cb.addEventListener('click', () => {
+  const parent = onoff2cb.parentElement;
+  if(onoff2cb.checked){
+    parent.classList.add('active');
     recognition.start();
-  } else {
-    $(mainParent).removeClass('active');
+  } else{
+    parent.classList.remove('active');
     recognition.stop();
   }
-})
+});
 
 let toggleBotton = document.getElementById('onoff2');
 let toggleBottonClass = toggleBotton.classList;
