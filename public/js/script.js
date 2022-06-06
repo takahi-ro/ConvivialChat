@@ -16,7 +16,7 @@ let synth = window.speechSynthesis;
   const joinTrigger = document.getElementById('js-join-trigger');
   const leaveTrigger = document.getElementById('js-leave-trigger');
   // const remoteVideos = document.getElementById('js-remote-streams');
-  const roomId = document.getElementById('js-room-id');
+  // const roomId = document.getElementById('js-room-id');
   //const roomMode = document.getElementById('js-room-mode');
   const localText = document.getElementById('js-local-text');
   const sendTrigger = document.getElementById('js-send-trigger');
@@ -24,7 +24,7 @@ let synth = window.speechSynthesis;
   const messages = document.getElementById('js-messages');
   const meta = document.getElementById('js-meta');
   const sdkSrc = document.querySelector('script[src*=skyway]');
-  const Yourname = document.getElementById('namae');
+  // const Yourname = document.getElementById('namae');
   let form = document.getElementById('form');
   let loginUsers = document.getElementById('loginUsers');
   let loginChildren = loginUsers.children;
@@ -70,8 +70,9 @@ let synth = window.speechSynthesis;
   setInterval(onoffSwitch,1000); 
 
   // eslint-disable-next-line require-atomic-updates
-  const peer = (window.peer = new Peer({
+  const peer = (window.peer = new Peer(yourName, {
     key: window.__SKYWAY_KEY__,
+    credential,
     debug: 3,
   }));
 
@@ -84,7 +85,7 @@ let synth = window.speechSynthesis;
     }
 
     //この下で相手に渡すデータを決めている
-    const room = peer.joinRoom(roomId.value, {
+    const room = peer.joinRoom(roomId, {
       mode: "sfu",
       stream: localStream
     });
@@ -97,11 +98,11 @@ let synth = window.speechSynthesis;
       messages.textContent += '=== あなたが参加しました ===\n\n';
       let selfItem = document.createElement('li');
       selfItem.id = MypeerId;
-      selfItem.textContent = Yourname.value;
+      selfItem.textContent = yourName;
       loginUsers.appendChild(selfItem);
       //追加したコード：名前送れるかも
-      // room.send(Yourname.value)
-      room.send({ name: Yourname.value, type: "open" });
+      // room.send(yourName)
+      room.send({ name: yourName, type: "open" });
       //接続したときに、すでに以前からログインずみの人達を表示する
       peer.listAllPeers((peers) => {
         let items = [];
@@ -124,7 +125,7 @@ let synth = window.speechSynthesis;
       item.id = peerId;
       loginUsers.appendChild(item);
 
-      let yourdata = { name: Yourname.value, type: "login"};
+      let yourdata = { name: yourName, type: "login"};
       room.send(yourdata);
 
       //チャット下までスクロール
@@ -318,7 +319,7 @@ let synth = window.speechSynthesis;
     //リアクションボタンを送る
     function SendReaction(content,type,sayText,volume,rate,pitch){
       messages.textContent += content;
-      let ReactionSendData = { type: type, name: Yourname.value};
+      let ReactionSendData = { type: type, name: yourName};
       room.send(ReactionSendData);
       if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
         if (synth.speaking) {
@@ -371,9 +372,9 @@ let synth = window.speechSynthesis;
     form.addEventListener('input', function (e) {
       e.preventDefault();
       actionTime = Date.now();
-      let typingData = { name: Yourname.value, type: "typing", time: actionTime, peerId: MypeerId };
+      let typingData = { name: yourName, type: "typing", time: actionTime, peerId: MypeerId };
       room.send(typingData);
-      if (loginChildren[0].textContent == Yourname.value) {
+      if (loginChildren[0].textContent == yourName) {
         loginChildren[0].textContent += "が入力中....";
       }
 
@@ -422,10 +423,10 @@ let synth = window.speechSynthesis;
     //テキストエリアの外を選択したら入力中が消えるようにする
     localText.addEventListener('blur', (e) => {
       e.preventDefault();
-      let BlurSendData = { type: 'Blur', name: Yourname.value};
+      let BlurSendData = { type: 'Blur', name: yourName};
       room.send(BlurSendData);
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
+      if (loginChildren[0].textContent == yourName + "が入力中....") {
+        loginChildren[0].textContent = yourName;
       }
     })
 
@@ -492,8 +493,8 @@ let synth = window.speechSynthesis;
         console.log("text value is null");
       } else {
         let saytext = `「${localText.value.trim()}」`;
-        let senddata1 = `${Yourname.value}: ${saytext}\n`;
-        let sendDataSet1 = { name: Yourname.value, msg: senddata1, type: "say" };
+        let senddata1 = `${yourName}: ${saytext}\n`;
+        let sendDataSet1 = { name: yourName, msg: senddata1, type: "say" };
         room.send(sendDataSet1);//自分の端末で読み上げる機能自体は一番下にある関数群が行っていて、ここでは接続しているPeerたちにデータの送信だけしてます。わかりにくいですが。
         if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
           // 後方一致のときの処理
@@ -504,12 +505,12 @@ let synth = window.speechSynthesis;
         localText.value = '';
       }
       //送信したら入力中消去
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
+      if (loginChildren[0].textContent == yourName + "が入力中....") {
+        loginChildren[0].textContent = yourName;
       }
 
       for (i = 0; i < userAdd.length; i++) {
-        if (userAdd[i].name == Yourname.value) {
+        if (userAdd[i].name == yourName) {
           userAdd = userAdd.splice(i, 1);
         }
       }
@@ -519,8 +520,8 @@ let synth = window.speechSynthesis;
       if (localText.value == '') {
         console.log("text value is null");
       } else {
-        let senddata2 = `${Yourname.value}: ${localText.value.trim()}\n`;
-        let sendDataSet2 = { name: Yourname.value, msg: senddata2, type: "send" };
+        let senddata2 = `${yourName}: ${localText.value.trim()}\n`;
+        let sendDataSet2 = { name: yourName, msg: senddata2, type: "send" };
         room.send(sendDataSet2);
         
         if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
@@ -532,11 +533,11 @@ let synth = window.speechSynthesis;
         localText.value = '';
       }
       //送信したら入力中消去
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
+      if (loginChildren[0].textContent == yourName + "が入力中....") {
+        loginChildren[0].textContent = yourName;
       }
       for (i = 0; i < userAdd.length; i++) {
-        if (userAdd[i].name == Yourname.value) {
+        if (userAdd[i].name == yourName) {
           userAdd = userAdd.splice(i, 1);
         }
       }
@@ -546,7 +547,7 @@ let synth = window.speechSynthesis;
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
             let speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
-            let senddata3 = `${Yourname.value}:${speechtext}\n`;
+            let senddata3 = `${yourName}:${speechtext}\n`;
             let sendDataSet3 = { msg: senddata3, type: "speech" };
             room.send(sendDataSet3);
             if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {

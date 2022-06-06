@@ -1,6 +1,28 @@
 "use strict";
+
+const hmac = require('crypto-js/hmac-sha256');
+const CryptoJS = require('crypto-js');
+
 const Participant = require("../models/participant");
 
+// SkyWay Peer Authentication
+const secretKey = process.env.SKYWAY_SECRET_KEY;
+const credentialTTL = 60 * 60 * 5;
+
+function createSkywayCredential(peerId){
+  const unixTimestamp = Math.floor(Date.now() / 1000);
+  return {
+    peerId,
+    timestamp: unixTimestamp,
+    ttl: credentialTTL,
+    authToken: calculateAuthToken(peerId, unixTimestamp)
+  };
+}
+
+function calculateAuthToken(peerId, timestamp) {
+  const hash = CryptoJS.HmacSHA256(`${timestamp}:${credentialTTL}:${peerId}`, secretKey);
+  return CryptoJS.enc.Base64.stringify(hash);
+}
 
 // exports.getAllParticipants = (req, res, next) => {
 //     Participant.find({}, (error, participants) => {
@@ -35,16 +57,15 @@ module.exports ={
           });
       },
       saveParticipant:(req, res) => {
-        let newparticipant = new Participant({
-          roomname: req.body.roomname,
-          yourname: req.body.yourname
-        });
-        let value1 = req.body.roomname,
-           value2 = req.body.yourname;
+        const roomname = req.body.roomname;
+        const yourname = req.body.yourname;
+        const newparticipant = new Participant({ roomname, yourname });
+
         newparticipant
           .save()
           .then(result => {
-            res.render("home",{value1: value1,value2: value2});
+            const credential = JSON.stringify(createSkywayCredential(yourname));
+            res.render("home", { roomname, yourname, credential });
           })
           .catch(error => {
             if (error) res.send(error);
