@@ -9,12 +9,12 @@ I am developing remote conversation tool where text and speech can coexist witho
 This is my graduation project.
 
 
-## 使用した技術/Technologies used in this system
+## 使用した技術 / Technologies used in this system
 - [SkyWay](https://webrtc.ecl.ntt.com/)
 - [Web Speech API](https://wicg.github.io/speech-api/)
 
 
-## 概要/Outline
+## 概要 / Outline
 ![image](https://user-images.githubusercontent.com/57240543/132832314-2c7d7f54-dbf4-447b-9cca-b50fcb96c278.png)
 
 ### 遠隔会話ツールとしての基本機能
@@ -37,7 +37,7 @@ This is my graduation project.
   - マイクをオンにして発言した内容が音声認識され、チャットのログに表示される
     - チャットのログ上に『』で囲まれ表示
 
-## ローカル環境で動かす手順/Procedure to operate in your local environment
+## ローカル環境で動かす手順 / Steps to run in your local environment
 1.  git cloneする
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
@@ -53,4 +53,4 @@ npm install
 ```sh 
 node main 
 ```
-6.  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
+6.  [localhost:3000](http://localhost:3000/)にブラウザでアクセスする（Google Chromeを推奨）
