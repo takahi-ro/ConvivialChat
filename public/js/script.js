@@ -54,7 +54,14 @@ let reactionRepeatCount = 0;
 
   function appendText(text){
     if(reactions.some(r => messages.textContent.endsWith(r))) messages.textContent += "\n\n";
-    messages.textContent += text + "\n";
+    messages.textContent += text + "\n\n";
+    scrollToBottom();
+  }
+
+  function showIsTyping(peerId, typing){
+    const li = document.getElementById(peerId);
+    if(!li) return;
+    li.textContent = typing ? peerId + "が入力中...." : peerId;
   }
 
   let localStream = await navigator.mediaDevices
@@ -148,7 +155,7 @@ let reactionRepeatCount = 0;
 
 
     //リアクションボタンを受け取るための関数
-    function receiveReaction(content){
+    function handleReaction(content){
       const params = reactionParams[content];
       if(!params){
         console.error('unsupported reaction type');
@@ -173,6 +180,7 @@ let reactionRepeatCount = 0;
     }
 
     function handleData(data, src){
+      let text;
       switch (data.type) {
         case 'login':
           //ログイン時に前からいるユーザーを表示
@@ -191,68 +199,50 @@ let reactionRepeatCount = 0;
           });
           break;
         case 'say':
-          let msg = new SpeechSynthesisUtterance();
-          let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+          text = `${data.name}:「${data.msg}」`;
+          appendText(text);
+          showIsTyping(data.name, false);
+
+          const msg = new SpeechSynthesisUtterance();
+          const Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
           msg.voice = Voices[0];
-          let text = data.msg;
           msg.text = text;
           synth.speak(msg);
 
-          appendText(data.msg);
-
-          for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].textContent == data.name + "が入力中....") {
-              loginChildren[i].textContent = data.name;
-            }
-          }
           for (i = 0; i < userAdd.length; i++) {
             if (userAdd[i].name == data.name) {
               userAdd = userAdd.splice(i, 1);
             }
           }
-          scrollToBottom();
           break;
         case 'send':
-          appendText(data.msg);
+          text = `${data.name}: ${data.msg}`;
+          appendText(text);
+          showIsTyping(data.name, false);
 
-          for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].textContent == data.name + "が入力中....") {
-              loginChildren[i].textContent = data.name;
-            }
-          }
           for (i = 0; i < userAdd.length; i++) {
             if (userAdd[i].name == data.name) {
               userAdd = userAdd.splice(i, 1);
             }
           }
-          scrollToBottom();
           break;
         case 'speech':
-          appendText(data.msg);
+          text = `${data.name}:『${data.msg}』`;
+          appendText(text);
+          showIsTyping(data.name, false);
 
-          for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].textContent == data.name + "が入力中....") {
-              loginChildren[i].textContent = data.name;
-            }
-          }
           for (i = 0; i < userAdd.length; i++) {
             if (userAdd[i].name == data.name) {
               userAdd = userAdd.splice(i, 1);
             }
           }
-          scrollToBottom();
           break;
         case 'open':
           loginChildren[loginChildren.length - 1].textContent = data.name;
           appendText(`=== ${data.name} が参加しました ===`);
-          scrollToBottom();
           break;
         case 'typing':
-          for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].id == src && loginChildren[i].textContent == data.name) {
-              loginChildren[i].textContent += "が入力中....";
-            }
-          }
+          showIsTyping(data.name, true);
 
           if (!userAdd.map(m => m.name).includes(data.name)) {
             userAdd.push(data);
@@ -264,11 +254,8 @@ let reactionRepeatCount = 0;
           }
           break;
         case 'Blur':
-          for (i = 0; i < loginChildren.length; i++) {
-            if (loginChildren[i].textContent == data.name + "が入力中....") {
-              loginChildren[i].textContent = data.name;
-            }
-          }
+          showIsTyping(data.name, false);
+
           for (i = 0; i < userAdd.length; i++) {
             if (userAdd[i].name == data.name) {
               userAdd = userAdd.splice(i, 1);
@@ -276,7 +263,7 @@ let reactionRepeatCount = 0;
           }
           break;
         case 'reaction':
-          receiveReaction(data.reactionType);
+          handleReaction(data.reactionType);
           break;
       }
     }
@@ -363,12 +350,8 @@ let reactionRepeatCount = 0;
     room.on('peerLeave', peerId => {
       for (i = 0; i < loginChildren.length; i++) {
         if (loginChildren[i].id == peerId) {
-          if(reactions.some(r => messages.textContent.endsWith(r))){
-              // 後方一致のときの処理
-            messages.textContent += `\n\n=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
-          } else {
-            messages.textContent += `=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
-          }
+          const text = `=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n`;
+          appendText(text);
           loginUsers.removeChild(loginChildren[i]);
         }
       }
@@ -412,10 +395,9 @@ let reactionRepeatCount = 0;
     function onClickSend(type) {
       if (!localText.value) return;
 
-      const text = `「${localText.value.trim()}」`; // TODO: 単に localText.value を送信して、受信側で整えた方がよい
-      const msg = `${yourName}: ${text}\n`;
-      const data = { name: yourName, msg, type };
-      room.send(data); //自分の端末で読み上げる機能自体は一番下にある関数群が行っていて、ここでは接続しているPeerたちにデータの送信だけしてます。わかりにくいですが。　→やめた
+      const msg = localText.value.trim();
+      const data = { type, name: yourName, msg };
+      room.send(data);
       handleData(data, MypeerId); // TODO?: 自分の端末では自分の名前を読まないという特別扱いした処理も作ろうと思えば作れる
 
       localText.value = '';
@@ -425,9 +407,10 @@ let reactionRepeatCount = 0;
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            const speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
-            const msg = `${yourName}:${speechtext}\n`;
-            const data = { msg, type: "speech" };
+            // const speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
+            // const msg = `${yourName}:${speechtext}\n`;
+            const msg = event.results[event.results.length - 1][0].transcript;
+            const data = { type: "speech", name: yourName, msg  };
             room.send(data);
             handleData(data, MypeerId);
           } 
