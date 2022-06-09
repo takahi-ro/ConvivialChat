@@ -18,9 +18,8 @@ This is my graduation project.
 ![image](https://user-images.githubusercontent.com/57240543/132832314-2c7d7f54-dbf4-447b-9cca-b50fcb96c278.png)
 
 ### 遠隔会話ツールとしての基本機能
-- SkyWayのSDKを用いて実装したWeb上での音声通話機能
+- SkyWayのSDKを用いて実装したWeb上での音声通話&チャット機能
   - 画像右側中央のマイクのトグルボタンの切り替えで音声のオンオフ
-- Socket.ioを用いたチャット機能
   - 画像の中央下部にあるSendボタンを押すと通常のチャット送信が可能
 
 ### テキストとスピーチの共生（Text-Speech Symbiosis）を実現するための機能
