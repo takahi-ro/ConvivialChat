@@ -97,7 +97,7 @@ let reactionRepeatCount = 0;
 
 
     room.once('open', () => {
-      messages.textContent += '=== あなたが参加しました ===\n\n';
+      messages.textContent += '=== あなたが参加しました === \n\n';
       let selfItem = document.createElement('li');
       selfItem.id = MypeerId;
       selfItem.textContent = yourName;
@@ -157,7 +157,7 @@ let reactionRepeatCount = 0;
       reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
       messages.textContent += content;
       if(reactionRepeatCount >= 4){
-        if (synth.speaking) {
+        if (synth.speaking){
           console.error('speechSynthesis.speaking');
           return;
         }
@@ -191,14 +191,15 @@ let reactionRepeatCount = 0;
           });
           break;
         case 'say':
+          let sayText = `${data.name}:「${data.msg.trim()}」\n`;
           let msg = new SpeechSynthesisUtterance();
           let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
           msg.voice = Voices[0];
-          let text = data.msg;
+          let text = data.name == yourName ? data.msg : sayText;
           msg.text = text;
           synth.speak(msg);
-
-          appendText(data.msg);
+          
+          appendText(sayText);
 
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
@@ -213,7 +214,8 @@ let reactionRepeatCount = 0;
           scrollToBottom();
           break;
         case 'send':
-          appendText(data.msg);
+          let sendText = `${data.name}: ${data.msg.trim()} \n`;
+          appendText(sendText);
 
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
@@ -228,7 +230,8 @@ let reactionRepeatCount = 0;
           scrollToBottom();
           break;
         case 'speech':
-          appendText(data.msg);
+          let speechText = `${data.name}:『${data.msg.trim()}』\n`;
+          appendText(speechText);
 
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
@@ -244,7 +247,7 @@ let reactionRepeatCount = 0;
           break;
         case 'open':
           loginChildren[loginChildren.length - 1].textContent = data.name;
-          appendText(`=== ${data.name} が参加しました ===`);
+          appendText(`=== ${data.name} が参加しました === \n`);
           scrollToBottom();
           break;
         case 'typing':
@@ -408,15 +411,12 @@ let reactionRepeatCount = 0;
     sendTrigger.addEventListener('click', () => onClickSend("say"));
     sendTrigger2.addEventListener('click', () => onClickSend("send"));
 
-    //以下メッセージ送信3種類の関数
     function onClickSend(type) {
       if (!localText.value) return;
-
-      const text = `「${localText.value.trim()}」`; // TODO: 単に localText.value を送信して、受信側で整えた方がよい
-      const msg = `${yourName}: ${text}\n`;
+      const msg = localText.value;
       const data = { name: yourName, msg, type };
-      room.send(data); //自分の端末で読み上げる機能自体は一番下にある関数群が行っていて、ここでは接続しているPeerたちにデータの送信だけしてます。わかりにくいですが。　→やめた
-      handleData(data, MypeerId); // TODO?: 自分の端末では自分の名前を読まないという特別扱いした処理も作ろうと思えば作れる
+      room.send(data);
+      handleData(data, MypeerId); 
 
       localText.value = '';
     }
@@ -425,9 +425,8 @@ let reactionRepeatCount = 0;
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            const speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
-            const msg = `${yourName}:${speechtext}\n`;
-            const data = { msg, type: "speech" };
+            const msg = event.results[event.results.length - 1][0].transcript; 
+            const data = { name: yourName, msg, type: "speech"};
             room.send(data);
             handleData(data, MypeerId);
           } 
@@ -479,4 +478,4 @@ const ClickJoinButton = () => {
   console.log("You can join the room!");
 };
 
-setTimeout(ClickJoinButton, 3000)
+setTimeout(ClickJoinButton, 2000);
