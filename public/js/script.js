@@ -10,13 +10,22 @@ recognition.continuous = true;
 //Text to Speech の準備
 let synth = window.speechSynthesis;
 
+const reactions = ['👍', '😦', '🤔', '😮', '🤣'];
+const reactionParams = {
+  '👍': { text: 'いいね', volume: 2, rate: 3, pitch: 1.5 },
+  '😦': { text: 'へえぇぇ', volume: 1, rate: 1, pitch: 2 },
+  '🤔': { text: 'うぅうーん', volume: 1, rate: 1, pitch: 1 },
+  '😮': { text: 'ぉおおぉお', volume: 1, rate: 1, pitch: 1.9 },
+  '🤣': { text: 'ゎはっはっ', volume: 1, rate: 1, pitch: 2 }
+};
+let reactionRepeatCount = 0;
 
 (async function main() {
   // const localVideo = document.getElementById('js-local-stream');
   const joinTrigger = document.getElementById('js-join-trigger');
   const leaveTrigger = document.getElementById('js-leave-trigger');
   // const remoteVideos = document.getElementById('js-remote-streams');
-  const roomId = document.getElementById('js-room-id');
+
   //const roomMode = document.getElementById('js-room-mode');
   const localText = document.getElementById('js-local-text');
   const sendTrigger = document.getElementById('js-send-trigger');
@@ -24,31 +33,30 @@ let synth = window.speechSynthesis;
   const messages = document.getElementById('js-messages');
   const meta = document.getElementById('js-meta');
   const sdkSrc = document.querySelector('script[src*=skyway]');
-  const Yourname = document.getElementById('namae');
+
   let form = document.getElementById('form');
   let loginUsers = document.getElementById('loginUsers');
   let loginChildren = loginUsers.children;
   let userAdd = [];
   let userAdd2 = [];
   let flag;
-  let MyPeerId;
   let NowTime;
-  let actionTime;
-  let good = document.getElementById('good');
-  let heee = document.getElementById('heee');
-  let uun = document.getElementById('uun');
-  let ooo = document.getElementById('ooo');
-  let hahaha = document.getElementById('hahaha');
 
   meta.innerText = `
     UA: ${navigator.userAgent}
     SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}
   `.trim();
+
   //下までチャットをスクロールさせる
-  let scrollToBottom = () => {
+  function scrollToBottom(){
     messages.scrollTop = messages.scrollHeight;
   };
-  
+
+  function appendText(text){
+    if(reactions.some(r => messages.textContent.endsWith(r))) messages.textContent += "\n\n";
+    messages.textContent += text + "\n";
+  }
+
   let localStream = await navigator.mediaDevices
     .getUserMedia({
       audio: true
@@ -56,22 +64,17 @@ let synth = window.speechSynthesis;
     })
     .catch(console.error);
 
-  //マイクのストリームのオンオフ
-  const onoffSwitch = () => {
-    let OnOff2 = document.getElementById("onoff2");
-    let onoff2 = OnOff2.className;
-    if (onoff2 == "toggle-btn active") {
-      localStream.getAudioTracks().forEach((track) => (track.enabled = true));
-    } else {
-      localStream.getAudioTracks().forEach((track) => (track.enabled = false));
-    }
-  }
-  
-  setInterval(onoffSwitch,1000); 
+  // マイクのストリームのオンオフ
+  setInterval(() => {
+    const onOff2 = document.getElementById("onoff2");
+    const enableTrack = onOff2.classList.contains("active");
+    localStream.getAudioTracks().forEach((track) => track.enabled = enableTrack);
+  }, 1000); 
 
   // eslint-disable-next-line require-atomic-updates
-  const peer = (window.peer = new Peer({
+  const peer = (window.peer = new Peer(yourName, {
     key: window.__SKYWAY_KEY__,
+    credential,
     debug: 3,
   }));
 
@@ -84,7 +87,7 @@ let synth = window.speechSynthesis;
     }
 
     //この下で相手に渡すデータを決めている
-    const room = peer.joinRoom(roomId.value, {
+    const room = peer.joinRoom(roomId, {
       mode: "sfu",
       stream: localStream
     });
@@ -94,14 +97,14 @@ let synth = window.speechSynthesis;
 
 
     room.once('open', () => {
-      messages.textContent += '=== あなたが参加しました ===\n\n';
+      messages.textContent += '=== あなたが参加しました === \n\n';
       let selfItem = document.createElement('li');
       selfItem.id = MypeerId;
-      selfItem.textContent = Yourname.value;
+      selfItem.textContent = yourName;
       loginUsers.appendChild(selfItem);
+
       //追加したコード：名前送れるかも
-      // room.send(Yourname.value)
-      room.send({ name: Yourname.value, type: "open" });
+      room.send({ name: yourName, type: "open" });
       //接続したときに、すでに以前からログインずみの人達を表示する
       peer.listAllPeers((peers) => {
         let items = [];
@@ -120,17 +123,13 @@ let synth = window.speechSynthesis;
 
 
     room.on('peerJoin', (peerId) => {
-      let item = document.createElement('li');
+      const item = document.createElement('li');
       item.id = peerId;
       loginUsers.appendChild(item);
 
-      let yourdata = { name: Yourname.value, type: "login"};
-      room.send(yourdata);
+      const data = { name: yourName, type: "login" };
+      room.send(data);
 
-      //チャット下までスクロール
-      let scrollToBottom = () => {
-        messages.scrollTop = messages.scrollHeight;
-      };
       scrollToBottom();
     });
 
@@ -149,30 +148,31 @@ let synth = window.speechSynthesis;
 
 
     //リアクションボタンを受け取るための関数
-    function receiveReaction(content,sayText,volume,rate,pitch){
+    function receiveReaction(content){
+      const params = reactionParams[content];
+      if(!params){
+        console.error('unsupported reaction type');
+        return;
+      }
+      reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
       messages.textContent += content;
-      if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
-        if (synth.speaking) {
+      if(reactionRepeatCount >= 4){
+        if (synth.speaking){
           console.error('speechSynthesis.speaking');
           return;
+        }
       }
-      }
-      let msg = new SpeechSynthesisUtterance();
-      let text = sayText;
+      let msg = new SpeechSynthesisUtterance(params.text);
       let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
       msg.voice = Voices[0];
-      msg.text = text;
-      msg.volume = volume;
-      msg.rate = rate;
-      msg.pitch = pitch;
+      msg.volume = params.volume;
+      msg.rate = params.rate;
+      msg.pitch = params.pitch;
       synth.speak(msg);
       scrollToBottom();
     }
 
-  
-    room.on('data', ({ data, src }) => {
-
-      // Show a message sent to the room and who sent
+    function handleData(data, src){
       switch (data.type) {
         case 'login':
           //ログイン時に前からいるユーザーを表示
@@ -191,18 +191,16 @@ let synth = window.speechSynthesis;
           });
           break;
         case 'say':
+          let sayText = `${data.name}:「${data.msg.trim()}」\n`;
           let msg = new SpeechSynthesisUtterance();
           let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
           msg.voice = Voices[0];
-          let text = data.msg;
+          let text = data.name == yourName ? data.msg : sayText;
           msg.text = text;
           synth.speak(msg);
-          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
-            // 後方一致のときの処理
-            messages.textContent += `\n\n${data.msg}\n`;
-          } else {
-            messages.textContent += `${data.msg}\n`;
-          }
+          
+          appendText(sayText);
+
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
               loginChildren[i].textContent = data.name;
@@ -216,12 +214,8 @@ let synth = window.speechSynthesis;
           scrollToBottom();
           break;
         case 'send':
-          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
-            // 後方一致のときの処理
-            messages.textContent += `\n\n${data.msg}\n`;
-          } else {
-            messages.textContent += `${data.msg}\n`;
-          }
+          let sendText = `${data.name}: ${data.msg.trim()} \n`;
+          appendText(sendText);
 
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
@@ -236,12 +230,9 @@ let synth = window.speechSynthesis;
           scrollToBottom();
           break;
         case 'speech':
-          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
-            // 後方一致のときの処理
-            messages.textContent += `\n\n${data.msg}\n`;
-          } else {
-            messages.textContent += `${data.msg}\n`;
-          }
+          let speechText = `${data.name}:『${data.msg.trim()}』\n`;
+          appendText(speechText);
+
           for (i = 0; i < loginChildren.length; i++) {
             if (loginChildren[i].textContent == data.name + "が入力中....") {
               loginChildren[i].textContent = data.name;
@@ -256,13 +247,7 @@ let synth = window.speechSynthesis;
           break;
         case 'open':
           loginChildren[loginChildren.length - 1].textContent = data.name;
-          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔')|| messages.textContent.endsWith('🤣')) {
-            // 後方一致のときの処理
-            messages.textContent += `\n\n=== ${data.name} が参加しました ===\n\n`;
-          } else {
-            messages.textContent += `=== ${data.name} が参加しました ===\n\n`;
-          }
-
+          appendText(`=== ${data.name} が参加しました === \n`);
           scrollToBottom();
           break;
         case 'typing':
@@ -293,101 +278,49 @@ let synth = window.speechSynthesis;
             }
           }
           break;
-        case 'good':
-          receiveReaction('👍','いいね',2,3,1.5);
-          break;
-        case 'heee':
-          receiveReaction('😦','へえぇぇ',1,1,2);
-          break;
-        case 'uun':
-          receiveReaction('🤔','うぅうーん',1,1,1);
-          break;
-
-        case 'ooo':
-          receiveReaction('😮','ぉおおぉお',1,1,1.9);
-          break;
-
-        case 'hahaha':
-          receiveReaction('🤣','ゎはっはっ',1,1,2);
+        case 'reaction':
+          receiveReaction(data.reactionType);
           break;
       }
-    });
+    }
+  
+    room.on('data', ({ data, src }) => { handleData(data, src); });
 
-   
 
     //リアクションボタンを送る
-    function SendReaction(content,type,sayText,volume,rate,pitch){
-      messages.textContent += content;
-      let ReactionSendData = { type: type, name: Yourname.value};
-      room.send(ReactionSendData);
-      if (messages.textContent.endsWith('👍👍👍👍') || messages.textContent.endsWith('😦😦😦😦') || messages.textContent.endsWith('😮😮😮😮') || messages.textContent.endsWith('🤔🤔🤔🤔') || messages.textContent.endsWith('🤣🤣🤣🤣')){
-        if (synth.speaking) {
-          console.error('speechSynthesis.speaking');
-          return;
+    function sendReaction(reactionType){
+      const params = reactionParams[reactionType];
+      if(!params){
+        console.error('unsupported reaction type');
+        return;
       }
-      }
-      let text = sayText;
-      let msg = new SpeechSynthesisUtterance(text);
-      let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-      msg.voice = Voices[0];
-      msg.volume = volume;
-      msg.rate = rate;
-      msg.pitch = pitch;
-      synth.speak(msg);
-      scrollToBottom();
+            
+      const data = { type: 'reaction', reactionType, name: yourName };
+      room.send(data);
+      handleData(data, MypeerId);
     }
 
-    good.addEventListener('click', (e) => {
-      e.preventDefault();
-      SendReaction('👍','good','いいね',1,3,1.5);
-
-    })
-
-
-    heee.addEventListener('click', (e) => {
-      e.preventDefault();
-      SendReaction('😦','heee','へえぇぇ',1,1,2);
-    })
-
-    uun.addEventListener('click', (e) => {
-      e.preventDefault();
-      SendReaction('🤔','uun','うぅうーん',1,1,1);
-    })
-
-    ooo.addEventListener('click', (e) => {
-      e.preventDefault();
-      SendReaction('😮','ooo','ぉおおぉお',1,1,1.9);
-    })
-
-    hahaha.addEventListener('click', (e) => {
-      e.preventDefault();
-      SendReaction('🤣','hahaha','ゎはっはっ',1,1,2);
-    })
-
+    const reactionButtons = document.getElementsByClassName('reaction-button');
+    for(let i = 0; i < reactionButtons.length; i++){
+      const button = reactionButtons[i];
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const reactionType = e.target.dataset.type;
+        sendReaction(reactionType);
+      });
+    }
 
 
 
     //入力中にデータを送る
-    form.addEventListener('input', function (e) {
+    form.addEventListener('input', (e) => {
       e.preventDefault();
-      actionTime = Date.now();
-      let typingData = { name: Yourname.value, type: "typing", time: actionTime, peerId: MypeerId };
-      room.send(typingData);
-      if (loginChildren[0].textContent == Yourname.value) {
-        loginChildren[0].textContent += "が入力中....";
-      }
-
-      if (!userAdd.map(m => m.peerId).includes(MypeerId)) {
-        userAdd.push(typingData);
-      }
-      for (i = 0; i < userAdd.length; i++) {
-        if (userAdd[i].peerId == MypeerId) {
-          userAdd.splice(i, 1, typingData);
-        }
-      }
-
-
+      const time = Date.now();
+      const data = { name: yourName, type: "typing", time, peerId: MypeerId };
+      room.send(data);
+      handleData(data, MypeerId);
     })
+
     //時間がたてば入力中の表示を消去
     setInterval(function () { updateTime(userAdd) }, 2000);
 
@@ -422,11 +355,9 @@ let synth = window.speechSynthesis;
     //テキストエリアの外を選択したら入力中が消えるようにする
     localText.addEventListener('blur', (e) => {
       e.preventDefault();
-      let BlurSendData = { type: 'Blur', name: Yourname.value};
-      room.send(BlurSendData);
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
-      }
+      const data = { type: 'Blur', name: yourName };
+      room.send(data);
+      handleData(data, MypeerId);
     })
 
 
@@ -435,33 +366,27 @@ let synth = window.speechSynthesis;
     room.on('peerLeave', peerId => {
       for (i = 0; i < loginChildren.length; i++) {
         if (loginChildren[i].id == peerId) {
-          if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
-            // 後方一致のときの処理
+          if(reactions.some(r => messages.textContent.endsWith(r))){
+              // 後方一致のときの処理
             messages.textContent += `\n\n=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
           } else {
             messages.textContent += `=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n\n`;
           }
           loginUsers.removeChild(loginChildren[i]);
-
-
         }
       }
-      //チャット下までスクロール
-      let scrollToBottom = () => {
-        messages.scrollTop = messages.scrollHeight;
-      };
       scrollToBottom();
     });
 
     // for closing myself
     room.once('close', () => {
-      sendTrigger.removeEventListener('click', onClickSend);
-      sendTrigger2.removeEventListener('click', onClickSend2);
-      good.removeEventListener('click', SendReaction);
-      heee.removeEventListener('click', SendReaction);
-      uun.removeEventListener('click', SendReaction);
-      ooo.removeEventListener('click', SendReaction);
-      hahaha.removeEventListener('click', SendReaction);
+      // sendTrigger.removeEventListener('click', onClickSend);
+      // sendTrigger2.removeEventListener('click', onClickSend2);
+      // good.removeEventListener('click', SendReaction);
+      // heee.removeEventListener('click', SendReaction);
+      // uun.removeEventListener('click', SendReaction);
+      // ooo.removeEventListener('click', SendReaction);
+      // hahaha.removeEventListener('click', SendReaction);
 
       messages.textContent += '== あなたが退出しました ===\n';
     });
@@ -483,84 +408,27 @@ let synth = window.speechSynthesis;
 
     //下で定義した関数発動
     SpeechToText();
-    sendTrigger.addEventListener('click', onClickSend);
-    sendTrigger2.addEventListener('click', onClickSend2);
-    //以下メッセージ送信3種類の関数
-    function onClickSend() {
-      // Send message to all of the peers in the room via websocket
-      if (localText.value == '') {
-        console.log("text value is null");
-      } else {
-        let saytext = `「${localText.value.trim()}」`;
-        let senddata1 = `${Yourname.value}: ${saytext}\n`;
-        let sendDataSet1 = { name: Yourname.value, msg: senddata1, type: "say" };
-        room.send(sendDataSet1);//自分の端末で読み上げる機能自体は一番下にある関数群が行っていて、ここでは接続しているPeerたちにデータの送信だけしてます。わかりにくいですが。
-        if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
-          // 後方一致のときの処理
-          messages.textContent += `\n\n${senddata1}\n`;
-        } else {
-          messages.textContent += `${senddata1}\n`;
-        }
-        localText.value = '';
-      }
-      //送信したら入力中消去
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
-      }
+    sendTrigger.addEventListener('click', () => onClickSend("say"));
+    sendTrigger2.addEventListener('click', () => onClickSend("send"));
 
-      for (i = 0; i < userAdd.length; i++) {
-        if (userAdd[i].name == Yourname.value) {
-          userAdd = userAdd.splice(i, 1);
-        }
-      }
+    function onClickSend(type) {
+      if (!localText.value) return;
+      const msg = localText.value;
+      const data = { name: yourName, msg, type };
+      room.send(data);
+      handleData(data, MypeerId); 
+
+      localText.value = '';
     }
-    function onClickSend2() {
-      // Send message to all of the peers in the room via websocket
-      if (localText.value == '') {
-        console.log("text value is null");
-      } else {
-        let senddata2 = `${Yourname.value}: ${localText.value.trim()}\n`;
-        let sendDataSet2 = { name: Yourname.value, msg: senddata2, type: "send" };
-        room.send(sendDataSet2);
-        
-        if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
-          // 後方一致のときの処理
-          messages.textContent += `\n\n${senddata2}\n`;
-        } else {
-          messages.textContent += `${senddata2}\n`;
-        }
-        localText.value = '';
-      }
-      //送信したら入力中消去
-      if (loginChildren[0].textContent == Yourname.value + "が入力中....") {
-        loginChildren[0].textContent = Yourname.value;
-      }
-      for (i = 0; i < userAdd.length; i++) {
-        if (userAdd[i].name == Yourname.value) {
-          userAdd = userAdd.splice(i, 1);
-        }
-      }
-    }
+
     function SpeechToText() {
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            let speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
-            let senddata3 = `${Yourname.value}:${speechtext}\n`;
-            let sendDataSet3 = { msg: senddata3, type: "speech" };
-            room.send(sendDataSet3);
-            if (messages.textContent.endsWith('👍') || messages.textContent.endsWith('😦') || messages.textContent.endsWith('😮') || messages.textContent.endsWith('🤔') || messages.textContent.endsWith('🤣')) {
-              // 後方一致のときの処理
-              messages.textContent += `\n\n${senddata3}\n`;
-            } else {
-              messages.textContent += `${senddata3}\n`;
-            }
-
-            //チャットを一番下までスクロールさせる
-            let scrollToBottom = () => {
-              messages.scrollTop = messages.scrollHeight;
-            };
-            scrollToBottom();
+            const msg = event.results[event.results.length - 1][0].transcript; 
+            const data = { name: yourName, msg, type: "speech"};
+            room.send(data);
+            handleData(data, MypeerId);
           } 
         }
       }
@@ -568,29 +436,25 @@ let synth = window.speechSynthesis;
       startBtn.onclick = () => {
         let sttStartMessages = document.getElementById('message2');
         sttStartMessages.textContent = "Speech recogniton is supported!"
-      }
-      
+      } 
     }
-
   });
 
   peer.on('error', console.error);
-  
-}
-)();
+})();
 
 
-// ここから下はオンオフボタンのトグル
-$('.cb-value').click(function () {
-  let mainParent = $(this).parent('.toggle-btn');
-  if ($(mainParent).find('input.cb-value').is(':checked')) {
-    $(mainParent).addClass('active');
+const onoff2cb = document.getElementById('onoff2-cb');
+onoff2cb.addEventListener('click', () => {
+  const parent = onoff2cb.parentElement;
+  if(onoff2cb.checked){
+    parent.classList.add('active');
     recognition.start();
-  } else {
-    $(mainParent).removeClass('active');
+  } else{
+    parent.classList.remove('active');
     recognition.stop();
   }
-})
+});
 
 let toggleBotton = document.getElementById('onoff2');
 let toggleBottonClass = toggleBotton.classList;
@@ -614,57 +478,4 @@ const ClickJoinButton = () => {
   console.log("You can join the room!");
 };
 
-setTimeout(ClickJoinButton, 3000)
-
-//以下はテキストtoスピーチ,自分の端末で読み上げ
-window.addEventListener('DOMContentLoaded', function () {
-  let speech = new Speech();
-  speech.init();
-}, null);
-
-function Speech() {
-  this.textValue = null;
-  this.langValue = null;
-  this.volumeValue = null;
-  this.rateValue = null;
-  this.pitchValue = null;
-  this.message = document.getElementById('message');
-  this.text = document.getElementById("js-local-text");
-  this.btn = document.getElementById("js-send-trigger");
-  this.support = 'Speech Synthesis is supported!';
-  this.unsupported = 'Speech Synthesis is unsupported!';
-}
-
-Speech.prototype.init = function () {
-  let self = this;
-  if ('speechSynthesis' in window) {
-    console.log(self.support);
-  } else {
-    self.message.textContent = self.unsupported
-    self.text.setAttribute('disabled', 'disabled');
-    self.btn.setAttribute('disabled', 'disabled');
-  }
-  self.event();
-};
-
-Speech.prototype.getTextValue = function () {
-  return this.textValue = this.text.value;
-};
-
-Speech.prototype.setSpeech = function () {
-  let msg = new SpeechSynthesisUtterance();
-  let text = this.getTextValue();
-  let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-  msg.voice = Voices[0];
-  msg.volume = 1;
-  msg.rate = 1;
-  msg.pitch = 1;
-  msg.text = text;
-  msg.lang = 'ja-JP';
-  synth.speak(msg);
-};
-
-Speech.prototype.event = function () {
-  let self = this;
-  self.btn.addEventListener('click', function () { self.setSpeech(); }, null);
-};
+setTimeout(ClickJoinButton, 2000);

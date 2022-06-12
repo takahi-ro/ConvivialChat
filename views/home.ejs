@@ -10,9 +10,7 @@
         <div style = 'user-select: none;'>
           <div class="disable">
             <span id="js-room-mode"></span>:
-            <input type="text" placeholder="Room Name" id="js-room-id" value="<%= value1 %>">
             <button id="js-join-trigger" class="btn btn-outline-primary">Join</button>
-            <input type="text" id="namae" value="<%= value2 %>">
           </div>
     
             <div id="LoginUsersBox" style = "height:70%; background-color:#b4deff;">
@@ -62,8 +60,8 @@
               font-style:normal;
               font-weight: 900;
               content: "\f130";'></i>
-            <div class="toggle-btn " id="onoff2" style='display:inline-block'>
-              <input type="checkbox" checked class="cb-value" />
+            <div id="onoff2" class="toggle-btn" style='display:inline-block'>
+              <input id="onoff2-cb" type="checkbox" checked class="cb-value" />
               <span class="round-btn"></span>
             </div>
           </div>
@@ -75,28 +73,28 @@
             <p style="text-align: center; width: 92%; background-color:#fff;margin:0 auto;line-height:48px;margin-top:15px;">リアクションボタン</p>
             <div style=" margin:0 auto;margin-top:15px; width:92%; height:55%; background-color: #fff; position:relative;">
              
-              <div  style ="width:15%; height:50%;position:absolute; left:4.5%; top:20%" >
-                <button id = 'good' style = "width:100%; height:100%;">👍</button>
-                <p style = "margin:0; height:20%; width:100%;">いいね</p>
+              <div style="width:15%; height:50%;position:absolute; left:4.5%; top:20%" >
+                <button id='good' class="reaction-button" data-type="👍" style="width:100%; height:100%;">👍</button>
+                <p style="margin:0; height:20%; width:100%;">いいね</p>
               </div>
               
-              <div  style ="width:15%; height:50%;position:absolute; left:23.5%; top:20%">
-                <button id = 'heee' style = "width:100%; height:100%;">😦</button>
-                <p style = "margin:0;height:20%; width:100%;">へぇー</p>
+              <div style="width:15%; height:50%;position:absolute; left:23.5%; top:20%">
+                <button id='heee' class="reaction-button" data-type="😦" style="width:100%; height:100%;">😦</button>
+                <p style="margin:0;height:20%; width:100%;">へぇー</p>
               </div>
       
-              <div  style ="width:15%; height:50%;position:absolute; left:42.5%; top:20%">
-                <button id = 'uun' style = "width:100%; height:100%;">🤔</button>
-                <p style = "margin:0;height:20%; width:100%;">うーん</p>
+              <div style="width:15%; height:50%;position:absolute; left:42.5%; top:20%">
+                <button id='uun' class="reaction-button" data-type="🤔" style="width:100%; height:100%;">🤔</button>
+                <p style="margin:0;height:20%; width:100%;">うーん</p>
               </div>
       
-              <div  style ="width:15%; height:50%;position:absolute; left:61.5%; top:20%">
-                <button id = 'ooo' style = "width:100%; height:100%;">😮</button>
-                <p style = "margin:0;height:20%; width:100%;">おおー</p>
+              <div style="width:15%; height:50%;position:absolute; left:61.5%; top:20%">
+                <button id='ooo' class="reaction-button" data-type="😮" style="width:100%; height:100%;">😮</button>
+                <p style="margin:0;height:20%; width:100%;">おおー</p>
               </div>
-              <div  style ="width:15%; height:50%;position:absolute; left:80.5%; top:20%">
-                <button id = 'hahaha' style = "width:100%; height:100%;">🤣</button>
-                <p style = "margin:0;height:20%; width:100%;">わはは</p>
+              <div style="width:15%; height:50%;position:absolute; left:80.5%; top:20%">
+                <button id='hahaha' class="reaction-button" data-type="🤣" style="width:100%; height:100%;">🤣</button>
+                <p style="margin:0;height:20%; width:100%;">わはは</p>
               </div>
              
               
@@ -113,16 +111,11 @@
       </div>
       
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
       <script>
+        const roomId = '<%= roomname %>';
+        const yourName = '<%= yourname %>';
+        const credential = JSON.parse('<%- credential %>');
+
         // チャットのスクロールを一番したから開始する
         window.onload = function () {
           var form = document.getElementById('form');
@@ -140,17 +133,4 @@
       
           });
         };
-      
-      
-       
-      
-      
-      
-      </script>
-      <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
-      <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-      crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"
-        integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig=="
-        crossorigin="anonymous"></script>
-      
+      </script>      
