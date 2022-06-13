@@ -47,9 +47,10 @@ cd ConvivialChat_Public
 npm install 
 ```
 3.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIキーを自分のものに書き換える([SkyWay](https://webrtc.ecl.ntt.com/)に登録後、新しくアプリケーションを作成するとAPIキーが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
-4.  [./main.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/main.js)のデータベースへの接続先URLを自分のものに書き換える（MongoDBをインストールしてローカルホストのデータベースを使用するか、クラウドのサービスであるMongoDB Atlasを使用（詳細は割愛））
-5.  node mainによりローカルで起動
+4. [./controllers/homeController](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/controllers/homeController.js)のシークレットキーを自分のものに書き換える（APIキーを取得した際に同時に手に入るのですが、SkyWay側の設定で「Peer認証を利用する」にチェックを入れるのを忘れないように） 
+5.  [./main.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/main.js)のデータベースへの接続先URLを自分のものに書き換える（MongoDBをインストールしてローカルホストのデータベースを使用するか、クラウドのサービスであるMongoDB Atlasを使用（詳細は割愛））
+6.  node mainによりローカルで起動
 ```sh 
 node main 
 ```
-6.  [localhost:3000](http://localhost:3000/)にブラウザでアクセスする（Google Chromeを推奨）
+7.  [localhost:3000](http://localhost:3000/)にブラウザでアクセスする（Google Chromeを推奨）
