@@ -36,7 +36,7 @@ This is my graduation project.
   - マイクをオンにして発言した内容が音声認識され、チャットのログに表示される
     - チャットのログ上に『』で囲まれ表示
 
-## ローカル環境で動かす手順 / Steps to run in your local environment
+## ローカル環境で動かす手順 / Steps to run the server on local PC
 1.  git cloneする
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
