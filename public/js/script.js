@@ -37,10 +37,7 @@ let reactionRepeatCount = 0;
   let form = document.getElementById('form');
   let loginUsers = document.getElementById('loginUsers');
   let loginChildren = loginUsers.children;
-  let userAdd = [];
-  let userAdd2 = [];
-  let flag;
-  let NowTime;
+  const typingUsers = new Map();
 
   meta.innerText = `
     UA: ${navigator.userAgent}
@@ -202,40 +199,25 @@ let reactionRepeatCount = 0;
           text = `${data.name}:「${data.msg}」`;
           appendText(text);
           showIsTyping(data.name, false);
+          typingUsers.delete(data.name);
 
           const msg = new SpeechSynthesisUtterance();
           const Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
           msg.voice = Voices[0];
           msg.text = text;
           synth.speak(msg);
-
-          for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].name == data.name) {
-              userAdd = userAdd.splice(i, 1);
-            }
-          }
           break;
         case 'send':
           text = `${data.name}: ${data.msg}`;
           appendText(text);
           showIsTyping(data.name, false);
-
-          for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].name == data.name) {
-              userAdd = userAdd.splice(i, 1);
-            }
-          }
+          typingUsers.delete(data.name);
           break;
         case 'speech':
           text = `${data.name}:『${data.msg}』`;
           appendText(text);
           showIsTyping(data.name, false);
-
-          for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].name == data.name) {
-              userAdd = userAdd.splice(i, 1);
-            }
-          }
+          typingUsers.delete(data.name);
           break;
         case 'open':
           loginChildren[loginChildren.length - 1].textContent = data.name;
@@ -243,25 +225,11 @@ let reactionRepeatCount = 0;
           break;
         case 'typing':
           showIsTyping(data.name, true);
-
-          if (!userAdd.map(m => m.name).includes(data.name)) {
-            userAdd.push(data);
-          }
-          for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].peerId == src) {
-              userAdd.splice(i, 1, data);
-            }
-          }
+          typingUsers.set(data.name, Date.now());
           break;
         case 'Blur':
           showIsTyping(data.name, false);
-
-          for (i = 0; i < userAdd.length; i++) {
-            if (userAdd[i].name == data.name) {
-              userAdd = userAdd.splice(i, 1);
-            }
-          }
-          break;
+          typingUsers.delete(data.name);
         case 'reaction':
           handleReaction(data.reactionType);
           break;
@@ -306,35 +274,17 @@ let reactionRepeatCount = 0;
     })
 
     //時間がたてば入力中の表示を消去
-    setInterval(function () { updateTime(userAdd) }, 2000);
+    setInterval(updateIsTyping, 2000);
 
-    // //現在時刻更新と時間が経てば入力中消去
-    function updateTime(newUserAdd) {
-      NowTime = Date.now();
-      for (i = 0; i < newUserAdd.length; i++) {
-        if ((NowTime - newUserAdd[i].time) > 10000) {
-
-          userAdd2.push(newUserAdd[i]);
+    function updateIsTyping(){
+      const now = Date.now();
+      for(let [name, time] of typingUsers){
+        if(now - time > 10000){
+          typingUsers.delete(name);
+          showIsTyping(name, false);
         }
-      }
-      for (i = 0; i < userAdd2.length; i++) {
-        for (j = 0; j < loginChildren.length; j++) {
-          if (loginChildren[j].textContent == `${userAdd2[i].name}が入力中....` && loginChildren[j].id == userAdd2[i].peerId) {
-            loginChildren[j].textContent = userAdd2[i].name;
-
-          }
-          if (i == userAdd2.length - 1 && j == loginChildren.length - 1) {
-            flag = true;
-          }
-        }
-      }
-      if (flag) {
-        userAdd = newUserAdd.filter(i => userAdd2.indexOf(i) == -1);
-        userAdd2 = [];
-        flag = false;
       }
     }
-
 
     //テキストエリアの外を選択したら入力中が消えるようにする
     localText.addEventListener('blur', (e) => {
@@ -407,8 +357,6 @@ let reactionRepeatCount = 0;
       recognition.onresult = (event) => {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            // const speechtext = `『${event.results[event.results.length - 1][0].transcript}』`;
-            // const msg = `${yourName}:${speechtext}\n`;
             const msg = event.results[event.results.length - 1][0].transcript;
             const data = { type: "speech", name: yourName, msg  };
             room.send(data);
