@@ -34,7 +34,6 @@ let reactionRepeatCount = 0;
 
   const form = document.getElementById('form');
   const loginUsers = document.getElementById('loginUsers');
-  const loginChildren = loginUsers.children;
   const typingUsers = new Map();
 
   meta.innerText = `
@@ -51,6 +50,16 @@ let reactionRepeatCount = 0;
     if(reactions.some(r => messages.textContent.endsWith(r))) messages.textContent += "\n\n";
     messages.textContent += text + "\n\n";
     scrollToBottom();
+  }
+
+  function showPeer(peerId, name){
+    let li = document.getElementById(peerId);
+    if(!li){
+      li = document.createElement('li');
+      li.id = peerId;
+      loginUsers.appendChild(li);
+    }
+    li.textContent = name;
   }
 
   function showIsTyping(peerId, typing){
@@ -95,40 +104,14 @@ let reactionRepeatCount = 0;
 
     room.once('open', () => {
       messages.textContent += '=== あなたが参加しました ===\n\n';
-      const selfItem = document.createElement('li');
-      selfItem.id = yourPeerId;
-      selfItem.textContent = yourName;
-      loginUsers.appendChild(selfItem);
-
-      room.send({ name: yourName, type: "open" });
-
-      // 接続したときに、すでに以前からログインずみの人達を表示する
-      peer.listAllPeers((peers) => {
-        let items = [];
-          for (i = 0; i < peers.length; i++) {
-          if (peers[i] !== yourPeerId){
-            items[i] = document.createElement('li');
-            items[i].id = peers[i];
-            loginUsers.appendChild(items[i]);
-          }
-        }
-      });
-
+      showPeer(yourPeerId, yourName);
+      room.send({ name: yourName, type: "login" });
     });
-
-
 
     room.on('peerJoin', (peerId) => {
-      const item = document.createElement('li');
-      item.id = peerId;
-      loginUsers.appendChild(item);
-
-      const data = { name: yourName, type: "login" };
+      const data = { name: yourName, type: "name" }; // 新しい人が来たら名乗る
       room.send(data);
-
-      scrollToBottom();
     });
-
 
 
     // Render remote stream for new peer join in the room
@@ -171,22 +154,6 @@ let reactionRepeatCount = 0;
     function handleData(data, src){
       let text;
       switch (data.type) {
-        case 'login':
-          //ログイン時に前からいるユーザーを表示
-          peer.listAllPeers((peers) => {
-            let createUsers = () => {
-              if (loginChildren.length < peers.length) {
-                setTimeout(createUsers, 1000);
-              }
-              for (i = 0; i < loginChildren.length; i++) {
-                if (loginChildren[i].id == src) {
-                  loginChildren[i].textContent = data.name;
-                }
-              }
-            };
-            createUsers();
-          });
-          break;
         case 'say':
           text = `${data.name}:「${data.msg}」`;
           appendText(text);
@@ -210,9 +177,10 @@ let reactionRepeatCount = 0;
           showIsTyping(data.name, false);
           typingUsers.delete(data.name);
           break;
-        case 'open':
-          loginChildren[loginChildren.length - 1].textContent = data.name;
+        case 'login':
           appendText(`=== ${data.name} が参加しました ===`);
+        case 'name':
+          showPeer(src, data.name);
           break;
         case 'typing':
           showIsTyping(data.name, true);
@@ -289,15 +257,11 @@ let reactionRepeatCount = 0;
 
 
     // for closing room members
-    room.on('peerLeave', peerId => {
-      for (i = 0; i < loginChildren.length; i++) {
-        if (loginChildren[i].id == peerId) {
-          const text = `=== ${loginChildren[i].textContent.replace('が入力中....', '')} が退出しました ===\n`;
-          appendText(text);
-          loginUsers.removeChild(loginChildren[i]);
-        }
-      }
-      scrollToBottom();
+    room.on('peerLeave', (peerId) => {
+      const text = `=== ${peerId} が退出しました ===\n`;
+      appendText(text);
+      const li = document.getElementById(peerId);
+      loginUsers.removeChild(li);
     });
 
     // for closing myself
