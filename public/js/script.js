@@ -22,7 +22,6 @@ const reactionParams = {
 let reactionRepeatCount = 0;
 
 (async function main() {
-  const joinTrigger = document.getElementById('js-join-trigger');
   const leaveTrigger = document.getElementById('js-leave-trigger');
 
   const localText = document.getElementById('js-local-text');
@@ -68,6 +67,86 @@ let reactionRepeatCount = 0;
     li.textContent = typing ? peerId + "が入力中...." : peerId;
   }
 
+  function updateIsTyping(){
+    const now = Date.now();
+    for(let [name, time] of typingUsers){
+      if(now - time > 10000){
+        typingUsers.delete(name);
+        showIsTyping(name, false);
+      }
+    }
+  }
+
+  // リアクションボタンを受け取る
+  function handleReaction(content) {
+    const params = reactionParams[content];
+    if (!params) {
+      console.error('unsupported reaction type');
+      return;
+    }
+    reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
+    messages.textContent += content;
+    if (reactionRepeatCount >= 4) {
+      if (synth.speaking) {
+        console.error('speechSynthesis.speaking');
+        return;
+      }
+    }
+    const msg = new SpeechSynthesisUtterance(params.text);
+    const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+    msg.voice = voices[0];
+    msg.volume = params.volume;
+    msg.rate = params.rate;
+    msg.pitch = params.pitch;
+    synth.speak(msg);
+    scrollToBottom();
+  }
+
+  function handleData(data, src){
+    let text;
+    switch (data.type) {
+      case 'say':
+        text = `${data.name}:「${data.msg}」`;
+        appendText(text);
+        showIsTyping(data.name, false);
+        typingUsers.delete(data.name);
+
+        const msg = new SpeechSynthesisUtterance(text);
+        const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+        msg.voice = voices[0];
+        synth.speak(msg);
+        break;
+      case 'send':
+        text = `${data.name}: ${data.msg}`;
+        appendText(text);
+        showIsTyping(data.name, false);
+        typingUsers.delete(data.name);
+        break;
+      case 'speech':
+        text = `${data.name}:『${data.msg}』`;
+        appendText(text);
+        showIsTyping(data.name, false);
+        typingUsers.delete(data.name);
+        break;
+      case 'login':
+        appendText(`=== ${data.name} が参加しました ===`);
+      case 'name':
+        showPeer(src, data.name);
+        break;
+      case 'typing':
+        showIsTyping(data.name, true);
+        typingUsers.set(data.name, Date.now());
+        break;
+      case 'Blur':
+        showIsTyping(data.name, false);
+        typingUsers.delete(data.name);
+        break;
+      case 'reaction':
+        handleReaction(data.reactionType);
+        break;
+    }
+  }
+
   const localStream = await navigator.mediaDevices
     .getUserMedia({ audio: true })
     .catch(console.error);
@@ -86,19 +165,13 @@ let reactionRepeatCount = 0;
     debug: 3,
   });
 
-  // Register join handler
-  joinTrigger.addEventListener('click', () => {
-    // Note that you need to ensure the peer has connected to signaling server
-    // before using methods of peer instance.
-    if (!peer.open) {
-      return;
-    }
+  peer.on('error', console.error);
+  peer.on('open', joinRoom);
 
-    //この下で相手に渡すデータを決めている
-    const room = peer.joinRoom(roomId, {
-      mode: "sfu",
-      stream: localStream
-    });
+  function joinRoom(){
+    if (!peer.open) { return; }
+
+    const room = peer.joinRoom(roomId, { mode: "sfu", stream: localStream });
 
     const yourPeerId = room._peerId;
 
@@ -124,80 +197,8 @@ let reactionRepeatCount = 0;
       // remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
     });
-
-
-    //リアクションボタンを受け取るための関数
-    function handleReaction(content){
-      const params = reactionParams[content];
-      if(!params){
-        console.error('unsupported reaction type');
-        return;
-      }
-      reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
-      messages.textContent += content;
-      if(reactionRepeatCount >= 4){
-        if (synth.speaking) {
-          console.error('speechSynthesis.speaking');
-          return;
-        }
-      }
-      const msg = new SpeechSynthesisUtterance(params.text);
-      const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-      msg.voice = voices[0];
-      msg.volume = params.volume;
-      msg.rate = params.rate;
-      msg.pitch = params.pitch;
-      synth.speak(msg);
-      scrollToBottom();
-    }
-
-    function handleData(data, src){
-      let text;
-      switch (data.type) {
-        case 'say':
-          text = `${data.name}:「${data.msg}」`;
-          appendText(text);
-          showIsTyping(data.name, false);
-          typingUsers.delete(data.name);
-
-          const msg = new SpeechSynthesisUtterance(text);
-          const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-          msg.voice = voices[0];
-          synth.speak(msg);
-          break;
-        case 'send':
-          text = `${data.name}: ${data.msg}`;
-          appendText(text);
-          showIsTyping(data.name, false);
-          typingUsers.delete(data.name);
-          break;
-        case 'speech':
-          text = `${data.name}:『${data.msg}』`;
-          appendText(text);
-          showIsTyping(data.name, false);
-          typingUsers.delete(data.name);
-          break;
-        case 'login':
-          appendText(`=== ${data.name} が参加しました ===`);
-        case 'name':
-          showPeer(src, data.name);
-          break;
-        case 'typing':
-          showIsTyping(data.name, true);
-          typingUsers.set(data.name, Date.now());
-          break;
-        case 'Blur':
-          showIsTyping(data.name, false);
-          typingUsers.delete(data.name);
-          break;
-        case 'reaction':
-          handleReaction(data.reactionType);
-          break;
-      }
-    }
   
     room.on('data', ({ data, src }) => { handleData(data, src); });
-
 
     //リアクションボタンを送る
     function sendReaction(reactionType){
@@ -222,8 +223,6 @@ let reactionRepeatCount = 0;
       });
     }
 
-
-
     //入力中にデータを送る
     form.addEventListener('input', (e) => {
       e.preventDefault();
@@ -233,18 +232,7 @@ let reactionRepeatCount = 0;
       handleData(data, yourPeerId);
     })
 
-    //時間がたてば入力中の表示を消去
     setInterval(updateIsTyping, 2000);
-
-    function updateIsTyping(){
-      const now = Date.now();
-      for(let [name, time] of typingUsers){
-        if(now - time > 10000){
-          typingUsers.delete(name);
-          showIsTyping(name, false);
-        }
-      }
-    }
 
     //テキストエリアの外を選択したら入力中が消えるようにする
     localText.addEventListener('blur', (e) => {
@@ -253,8 +241,6 @@ let reactionRepeatCount = 0;
       room.send(data);
       handleData(data, yourPeerId);
     })
-
-
 
     // for closing room members
     room.on('peerLeave', (peerId) => {
@@ -308,9 +294,8 @@ let reactionRepeatCount = 0;
       }
     }
     
-  });
+  }
 
-  peer.on('error', console.error);
 })();
 
 
@@ -340,12 +325,3 @@ recognition.onend = function () {
     }
   }
 };
-
-//JOINボタンをクリックする
-const ClickJoinButton = () => {
-  const joinTrigger = document.getElementById('js-join-trigger');
-  joinTrigger.click();
-  console.log("You can join the room!");
-};
-
-setTimeout(ClickJoinButton, 3000)
