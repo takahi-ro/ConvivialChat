@@ -1,15 +1,16 @@
 const Peer = window.Peer;
-const startBtn = document.querySelector('#start-btn');
-const stopBtn = document.querySelector('#stop-btn');
-//Speech to Textの初期設定
+
+// Speech to Text の初期設定
 SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
-let recognition = new SpeechRecognition();
+const recognition = new SpeechRecognition();
 recognition.lang = 'ja-JP';
 recognition.interimResults = true;
 recognition.continuous = true;
-//Text to Speech の準備
-let synth = window.speechSynthesis;
 
+// Text to Speech の準備
+const synth = window.speechSynthesis;
+
+// リアクションの設定
 const reactions = ['👍', '😦', '🤔', '😮', '🤣'];
 const reactionParams = {
   '👍': { text: 'いいね', volume: 2, rate: 3, pitch: 1.5 },
@@ -21,12 +22,9 @@ const reactionParams = {
 let reactionRepeatCount = 0;
 
 (async function main() {
-  // const localVideo = document.getElementById('js-local-stream');
   const joinTrigger = document.getElementById('js-join-trigger');
   const leaveTrigger = document.getElementById('js-leave-trigger');
-  // const remoteVideos = document.getElementById('js-remote-streams');
 
-  //const roomMode = document.getElementById('js-room-mode');
   const localText = document.getElementById('js-local-text');
   const sendTrigger = document.getElementById('js-send-trigger');
   const sendTrigger2 = document.getElementById('js-send-trigger2');
@@ -34,9 +32,9 @@ let reactionRepeatCount = 0;
   const meta = document.getElementById('js-meta');
   const sdkSrc = document.querySelector('script[src*=skyway]');
 
-  let form = document.getElementById('form');
-  let loginUsers = document.getElementById('loginUsers');
-  let loginChildren = loginUsers.children;
+  const form = document.getElementById('form');
+  const loginUsers = document.getElementById('loginUsers');
+  const loginChildren = loginUsers.children;
   const typingUsers = new Map();
 
   meta.innerText = `
@@ -44,7 +42,7 @@ let reactionRepeatCount = 0;
     SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}
   `.trim();
 
-  //下までチャットをスクロールさせる
+  // 下までチャットをスクロールさせる
   function scrollToBottom(){
     messages.scrollTop = messages.scrollHeight;
   };
@@ -61,11 +59,8 @@ let reactionRepeatCount = 0;
     li.textContent = typing ? peerId + "が入力中...." : peerId;
   }
 
-  let localStream = await navigator.mediaDevices
-    .getUserMedia({
-      audio: true
-      // video: true
-    })
+  const localStream = await navigator.mediaDevices
+    .getUserMedia({ audio: true })
     .catch(console.error);
 
   // マイクのストリームのオンオフ
@@ -76,11 +71,11 @@ let reactionRepeatCount = 0;
   }, 1000); 
 
   // eslint-disable-next-line require-atomic-updates
-  const peer = (window.peer = new Peer(yourName, {
+  const peer = new Peer(yourName, {
     key: window.__SKYWAY_KEY__,
     credential,
     debug: 3,
-  }));
+  });
 
   // Register join handler
   joinTrigger.addEventListener('click', () => {
@@ -96,30 +91,27 @@ let reactionRepeatCount = 0;
       stream: localStream
     });
 
-    //自分のPeerId入れる
-    MypeerId = room._peerId;
-
+    const yourPeerId = room._peerId;
 
     room.once('open', () => {
       messages.textContent += '=== あなたが参加しました ===\n\n';
-      let selfItem = document.createElement('li');
-      selfItem.id = MypeerId;
+      const selfItem = document.createElement('li');
+      selfItem.id = yourPeerId;
       selfItem.textContent = yourName;
       loginUsers.appendChild(selfItem);
 
-      //追加したコード：名前送れるかも
       room.send({ name: yourName, type: "open" });
-      //接続したときに、すでに以前からログインずみの人達を表示する
+
+      // 接続したときに、すでに以前からログインずみの人達を表示する
       peer.listAllPeers((peers) => {
         let items = [];
           for (i = 0; i < peers.length; i++) {
-          if (peers[i] !== MypeerId){
+          if (peers[i] !== yourPeerId){
             items[i] = document.createElement('li');
             items[i].id = peers[i];
             loginUsers.appendChild(items[i]);
           }
         }
-
       });
 
     });
@@ -166,9 +158,9 @@ let reactionRepeatCount = 0;
           return;
         }
       }
-      let msg = new SpeechSynthesisUtterance(params.text);
-      let Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-      msg.voice = Voices[0];
+      const msg = new SpeechSynthesisUtterance(params.text);
+      const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+      msg.voice = voices[0];
       msg.volume = params.volume;
       msg.rate = params.rate;
       msg.pitch = params.pitch;
@@ -201,10 +193,9 @@ let reactionRepeatCount = 0;
           showIsTyping(data.name, false);
           typingUsers.delete(data.name);
 
-          const msg = new SpeechSynthesisUtterance();
-          const Voices = synth.getVoices().filter(v => v.lang == "ja-JP");
-          msg.voice = Voices[0];
-          msg.text = text;
+          const msg = new SpeechSynthesisUtterance(text);
+          const voices = synth.getVoices().filter(v => v.lang == "ja-JP");
+          msg.voice = voices[0];
           synth.speak(msg);
           break;
         case 'send':
@@ -230,6 +221,7 @@ let reactionRepeatCount = 0;
         case 'Blur':
           showIsTyping(data.name, false);
           typingUsers.delete(data.name);
+          break;
         case 'reaction':
           handleReaction(data.reactionType);
           break;
@@ -249,7 +241,7 @@ let reactionRepeatCount = 0;
             
       const data = { type: 'reaction', reactionType, name: yourName };
       room.send(data);
-      handleData(data, MypeerId);
+      handleData(data, yourPeerId);
     }
 
     const reactionButtons = document.getElementsByClassName('reaction-button');
@@ -268,9 +260,9 @@ let reactionRepeatCount = 0;
     form.addEventListener('input', (e) => {
       e.preventDefault();
       const time = Date.now();
-      const data = { name: yourName, type: "typing", time, peerId: MypeerId };
+      const data = { name: yourName, type: "typing", time, peerId: yourPeerId };
       room.send(data);
-      handleData(data, MypeerId);
+      handleData(data, yourPeerId);
     })
 
     //時間がたてば入力中の表示を消去
@@ -291,7 +283,7 @@ let reactionRepeatCount = 0;
       e.preventDefault();
       const data = { type: 'Blur', name: yourName };
       room.send(data);
-      handleData(data, MypeerId);
+      handleData(data, yourPeerId);
     })
 
 
@@ -310,66 +302,48 @@ let reactionRepeatCount = 0;
 
     // for closing myself
     room.once('close', () => {
-      // sendTrigger.removeEventListener('click', onClickSend);
-      // sendTrigger2.removeEventListener('click', onClickSend2);
-      // good.removeEventListener('click', SendReaction);
-      // heee.removeEventListener('click', SendReaction);
-      // uun.removeEventListener('click', SendReaction);
-      // ooo.removeEventListener('click', SendReaction);
-      // hahaha.removeEventListener('click', SendReaction);
-
       messages.textContent += '== あなたが退出しました ===\n';
     });
 
-    //退出の際の処理
-    function AreYouLeave() {
-      let StartConv = confirm("本当に退出しますか？");
-      if (StartConv) {
-        () => room.close(), { once: true }
+    // 退出の際の処理
+    function handleLeave() {
+      if (confirm("本当に退出しますか？")) {
+        room.close();
         window.location.href = "https://convivialchat.herokuapp.com/";
-      } else {
-        return;
       }
     }
-    leaveTrigger.addEventListener('click', AreYouLeave);
+    leaveTrigger.addEventListener('click', handleLeave, { once: true });
 
 
 
 
-    //下で定義した関数発動
-    SpeechToText();
     sendTrigger.addEventListener('click', () => onClickSend("say"));
     sendTrigger2.addEventListener('click', () => onClickSend("send"));
 
-    //以下メッセージ送信3種類の関数
+    // メッセージ送信 for type "say" or "send"
     function onClickSend(type) {
       if (!localText.value) return;
 
       const msg = localText.value.trim();
       const data = { type, name: yourName, msg };
       room.send(data);
-      handleData(data, MypeerId); // TODO?: 自分の端末では自分の名前を読まないという特別扱いした処理も作ろうと思えば作れる
+      handleData(data, yourPeerId); // TODO?: 自分の端末では自分の名前を読まないという特別扱いした処理も作ろうと思えば作れる
 
       localText.value = '';
     }
 
-    function SpeechToText() {
-      recognition.onresult = (event) => {
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            const msg = event.results[event.results.length - 1][0].transcript;
-            const data = { type: "speech", name: yourName, msg  };
-            room.send(data);
-            handleData(data, MypeerId);
-          } 
+    // メッセージ送信 for type "speech"
+    recognition.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          const msg = event.results[event.results.length - 1][0].transcript;
+          const data = { type: "speech", name: yourName, msg };
+          room.send(data);
+          handleData(data, yourPeerId);
         }
       }
-
-      startBtn.onclick = () => {
-        let sttStartMessages = document.getElementById('message2');
-        sttStartMessages.textContent = "Speech recogniton is supported!"
-      } 
     }
+    
   });
 
   peer.on('error', console.error);
@@ -388,8 +362,8 @@ onoff2cb.addEventListener('click', () => {
   }
 });
 
-let toggleBotton = document.getElementById('onoff2');
-let toggleBottonClass = toggleBotton.classList;
+const toggleBotton = document.getElementById('onoff2');
+const toggleBottonClass = toggleBotton.classList;
 
 recognition.onend = function () {
   if (toggleBottonClass.contains('active')) {
