@@ -93,7 +93,7 @@ const loginUsers = document.getElementById('loginUsers');
       // remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
     });
-  
+
     room.on('data', ({ data, src }) => { handleData(data, src); });
 
     function handleData(data, src){

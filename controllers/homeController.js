@@ -6,7 +6,7 @@ const CryptoJS = require('crypto-js');
 const Participant = require("../models/participant");
 
 // SkyWay Peer Authentication
-const secretKey = process.env.SKYWAY_SECRET_KEY;
+const secretKey = process.env.SKYWAY_SECRET_KEY; //ローカル環境で動かすときに書き換えの必要あり
 const credentialTTL = 60 * 60 * 5;
 
 function createSkywayCredential(peerId){

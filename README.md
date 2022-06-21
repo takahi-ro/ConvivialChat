@@ -9,18 +9,17 @@ I am developing remote conversation tool where text and speech can coexist witho
 This is my graduation project.
 
 
-## 使用した技術/Technologies used in this system
+## 使用した技術 / Technologies used in this system
 - [SkyWay](https://webrtc.ecl.ntt.com/)
 - [Web Speech API](https://wicg.github.io/speech-api/)
 
 
-## 概要/Outline
+## 概要 / Outline
 ![image](https://user-images.githubusercontent.com/57240543/132832314-2c7d7f54-dbf4-447b-9cca-b50fcb96c278.png)
 
 ### 遠隔会話ツールとしての基本機能
-- SkyWayのSDKを用いて実装したWeb上での音声通話機能
+- SkyWayのSDKを用いて実装したWeb上での音声通話&チャット機能
   - 画像右側中央のマイクのトグルボタンの切り替えで音声のオンオフ
-- Socket.ioを用いたチャット機能
   - 画像の中央下部にあるSendボタンを押すと通常のチャット送信が可能
 
 ### テキストとスピーチの共生（Text-Speech Symbiosis）を実現するための機能
@@ -37,7 +36,7 @@ This is my graduation project.
   - マイクをオンにして発言した内容が音声認識され、チャットのログに表示される
     - チャットのログ上に『』で囲まれ表示
 
-## ローカル環境で動かす手順/Procedure to operate in your local environment
+## ローカル環境で動かす手順 / Steps to run the server on local PC
 1.  git cloneする
 ```sh 
 git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
@@ -48,9 +47,10 @@ cd ConvivialChat_Public
 npm install 
 ```
 3.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIキーを自分のものに書き換える([SkyWay](https://webrtc.ecl.ntt.com/)に登録後、新しくアプリケーションを作成するとAPIキーが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
-4.  [./main.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/main.js)のデータベースへの接続先URLを自分のものに書き換える（MongoDBをインストールしてローカルホストのデータベースを使用するか、クラウドのサービスであるMongoDB Atlasを使用（詳細は割愛））
-5.  node mainによりローカルで起動
+4. [./controllers/homeController](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/controllers/homeController.js)のシークレットキーを自分のものに書き換える（APIキーを取得した際に同時に手に入るのですが、SkyWay側の設定で「Peer認証を利用する」にチェックを入れるのを忘れないように） 
+5.  [./main.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/main.js)のデータベースへの接続先URLを自分のものに書き換える（MongoDBをインストールしてローカルホストのデータベースを使用するか、クラウドのサービスであるMongoDB Atlasを使用（詳細は割愛））
+6.  node mainによりローカルで起動
 ```sh 
 node main 
 ```
-6.  localhost:3000にブラウザでアクセスする（Google Chromeを推奨）
+7.  [localhost:3000](http://localhost:3000/)にブラウザでアクセスする（Google Chromeを推奨）
