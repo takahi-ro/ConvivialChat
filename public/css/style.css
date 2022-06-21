@@ -132,10 +132,6 @@ video {
   text-align:center;
 }
 
-/* ジョインするボタンを見えなくする */
-.disable{
-  display:none;
-}
 
 /* ここから下はオンオフボタンを切り替えるボタン */
 @import url(https://fonts.googleapis.com/css?family=Ubuntu);
