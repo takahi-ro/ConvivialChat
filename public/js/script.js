@@ -228,10 +228,11 @@ function handleReaction(content) {
     return;
   }
 
+  reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
+
   messages.textContent += content;
   scrollToBottom();
 
-  reactionRepeatCount = messages.textContent.endsWith(content) ? reactionRepeatCount + 1 : 0;
   if (reactionRepeatCount >= 4 && synth.speaking) {
     console.log('speechSynthesis.speaking');
     return;
