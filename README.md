@@ -43,7 +43,7 @@ git clone https://github.com/takahi-ro/ConvivialChat_Public.git
 ```
 2.  cloneしたディレクトリに移動してnpm installする
 ```sh
-cd ConvivialChat_Public
+cd ConvivialChat
 npm install 
 ```
 3.  [./public/js/key.js](https://github.com/takahi-ro/ConvivialChat_Public/blob/main/public/js/key.js) のAPIキーを自分のものに書き換える([SkyWay](https://webrtc.ecl.ntt.com/)に登録後、新しくアプリケーションを作成するとAPIキーが取得できるのですが、その際に利用可能ドメイン名にlocalhostを追加しておくのを忘れないように）
