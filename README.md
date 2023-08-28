@@ -39,7 +39,7 @@ This is my graduation project.
 ## ローカル環境で動かす手順 / Steps to run the server on local PC
 1.  git cloneする
 ```sh 
-git clone https://github.com/takahi-ro/ConvivialChat_Public.git 
+git clone https://github.com/takahi-ro/ConvivialChat.git
 ```
 2.  cloneしたディレクトリに移動してnpm installする
 ```sh
