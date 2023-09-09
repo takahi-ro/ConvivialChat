@@ -40,7 +40,7 @@ This is my graduation project.
 ![image](https://github.com/takahi-ro/ConvivialChat/assets/57240543/20624dfb-cc9f-4bd9-8a04-20d63f9f1dc4)
 1.  Room Numberの入力欄に、1～4桁の任意の部屋番号を入力
 2.  Your Nameの入力欄に、半角英数字のみを用いた任意の名前を入力
-3.  Joinボタンをクリックして入力した部屋番号の会話ページに参加
+3.  Joinボタンをクリックし、入力した部屋番号の会話ページに参加
 4.  参加後は概要にある画面に遷移するので、各種機能を用いて共通の部屋番号への参加者と会話を楽しむ
    
 ## ローカル環境で動かす手順 / Steps to run the server on local PC
