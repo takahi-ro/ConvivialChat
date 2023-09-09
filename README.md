@@ -37,8 +37,7 @@ This is my graduation project.
     - チャットのログ上に『』で囲まれ表示
    
 ##  使い方 / How to Use
-![image](https://github.com/takahi-ro/ConvivialChat/assets/57240543/e83b09ef-eb91-43f4-91b8-d3954176dc36)
-
+![image](https://github.com/takahi-ro/ConvivialChat/assets/57240543/20624dfb-cc9f-4bd9-8a04-20d63f9f1dc4)
 1.  Room Numberの入力欄に、に1～4桁の任意の部屋番号を入力
 2.  Your Nameの入力欄に、半角英数字のみを用いた任意の名前を入力
 3.  Joinボタンをクリックして指定した部屋番号の会話ページに参加
