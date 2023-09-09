@@ -35,7 +35,15 @@ This is my graduation project.
 - 音声による発言がテキストとしてチャットのログに表示される
   - マイクをオンにして発言した内容が音声認識され、チャットのログに表示される
     - チャットのログ上に『』で囲まれ表示
+   
+##  使い方 / How to Use
+![image](https://github.com/takahi-ro/ConvivialChat/assets/57240543/e83b09ef-eb91-43f4-91b8-d3954176dc36)
 
+1.  Room Numberの入力欄に、に1～4桁の任意の部屋番号を入力
+2.  Your Nameの入力欄に、半角英数字のみを用いた任意の名前を入力
+3.  Joinボタンをクリックして指定した部屋番号の会話ページに参加
+4.  参加後は概要にある画面に遷移するので、各種機能を用いて同一の部屋番号への参加者と会話を楽しむ
+   
 ## ローカル環境で動かす手順 / Steps to run the server on local PC
 1.  git cloneする
 ```sh 
