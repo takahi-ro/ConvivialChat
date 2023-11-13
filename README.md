@@ -61,3 +61,7 @@ npm install
 node main 
 ```
 7.  [localhost:3000](http://localhost:3000/)にブラウザでアクセスする（Google Chromeを推奨）
+
+## 関連リンク / Related Links
+- [ProtoPedia](https://protopedia.net/prototype/2817)
+- [知財図鑑](https://chizaizukan.com/property/725/)
